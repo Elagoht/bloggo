@@ -7,6 +7,7 @@ import (
 
 	"net/http"
 
+	"github.com/Elagoht/bloggo/utils"
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
 )
@@ -21,6 +22,8 @@ func main() {
 	if port == "" {
 		port = "2999"
 	}
+
+	utils.InitDB()
 
 	router := chi.NewRouter()
 
