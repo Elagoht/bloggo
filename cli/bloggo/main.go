@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"net/http"
+
+	"github.com/go-chi/chi"
 )
 
 func main() {
@@ -15,10 +17,12 @@ func main() {
 		port = "2999"
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, World!")
+	router := chi.NewRouter()
+
+	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Fprintf(writer, "Hello, World!")
 	})
 
 	log.Println("Starting server on http://localhost:" + port)
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+port, router)
 }
