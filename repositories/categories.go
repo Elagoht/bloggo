@@ -28,7 +28,14 @@ func (repository *CategoryRepository) GetAll() ([]models.Category, error) {
 
 	for rows.Next() {
 		var category models.Category
-		err := rows.Scan(&category.Id, &category.Name, &category.Slug, &category.Description, &category.Keywords, &category.Spot)
+		err := rows.Scan(
+			&category.Id,
+			&category.Name,
+			&category.Slug,
+			&category.Description,
+			&category.Keywords,
+			&category.Spot,
+		)
 		if err != nil {
 			return nil, err
 		}
