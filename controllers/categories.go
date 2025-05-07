@@ -22,7 +22,7 @@ func NewCategoryController() *CategoryController {
 func (controller *CategoryController) GetAllCategories(writer http.ResponseWriter, request *http.Request) {
 	categories, err := controller.categoryService.GetAll()
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		utils.HandleError(err, writer)
 		return
 	}
 
