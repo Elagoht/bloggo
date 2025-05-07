@@ -23,114 +23,103 @@ func NewCategoryController() *CategoryController {
 func (controller *CategoryController) GetAllCategories(
 	writer http.ResponseWriter,
 	request *http.Request,
-) {
+) *utils.AppError {
 	categories, err := controller.categoryService.GetAll()
 	if err != nil {
-		utils.HandleError(err, writer)
-		return
+		return err
 	}
 
 	json.NewEncoder(writer).Encode(categories)
+	return nil
 }
 
 func (controller *CategoryController) GetCategoryBySlug(
 	writer http.ResponseWriter,
 	request *http.Request,
-) {
+) *utils.AppError {
 	slug := chi.URLParam(request, "slug")
 
 	category, err := controller.categoryService.GetBySlug(slug)
 	if err != nil {
-		utils.HandleError(err, writer)
-		return
+		return err
 	}
 
 	json.NewEncoder(writer).Encode(category)
+	return nil
 }
 
 func (controller *CategoryController) CreateCategory(
 	writer http.ResponseWriter,
 	request *http.Request,
-) {
+) *utils.AppError {
 	var category models.RequestCategoryCreate
-	err := json.NewDecoder(request.Body).Decode(&category)
-	if err != nil {
-		utils.HandleError(err, writer)
-		return
+	bodyErr := json.NewDecoder(request.Body).Decode(&category)
+	if bodyErr != nil {
+		return utils.ErrInternalServer
 	}
 
 	createdCategory, err := controller.categoryService.Create(category)
 	if err != nil {
-		if err.Error() == "category already exists" {
-			utils.NewErrorWithStatus(
-				utils.NewError("category already exists"),
-				writer,
-				http.StatusConflict,
-			)
-		} else {
-			utils.HandleError(err, writer)
-		}
-		return
+		return err
 	}
 
 	json.NewEncoder(writer).Encode(createdCategory)
+	return nil
 }
 
 func (controller *CategoryController) UpdateCategory(
 	writer http.ResponseWriter,
 	request *http.Request,
-) {
+) *utils.AppError {
 	slug := chi.URLParam(request, "slug")
 
 	var category models.RequestCategoryUpdate
-	err := json.NewDecoder(request.Body).Decode(&category)
-	if err != nil {
-		utils.HandleError(err, writer)
-		return
+	bodyErr := json.NewDecoder(request.Body).Decode(&category)
+	if bodyErr != nil {
+		return utils.ErrInternalServer
 	}
 
 	updatedCategory, err := controller.categoryService.Update(slug, category)
 	if err != nil {
-		utils.HandleError(err, writer)
-		return
+		return err
 	}
 
 	json.NewEncoder(writer).Encode(updatedCategory)
+	return nil
 }
 
 func (controller *CategoryController) PatchCategory(
 	writer http.ResponseWriter,
 	request *http.Request,
-) {
+) *utils.AppError {
 	slug := chi.URLParam(request, "slug")
 
 	var category models.RequestCategoryUpdate
-	err := json.NewDecoder(request.Body).Decode(&category)
-	if err != nil {
-		utils.HandleError(err, writer)
-		return
+	bodyErr := json.NewDecoder(request.Body).Decode(&category)
+	if bodyErr != nil {
+		return utils.ErrInternalServer
 	}
 
 	patchedCategory, err := controller.categoryService.Patch(slug, category)
 	if err != nil {
-		utils.HandleError(err, writer)
-		return
+		return err
 	}
 
 	json.NewEncoder(writer).Encode(patchedCategory)
+	return nil
 }
 
 func (controller *CategoryController) DeleteCategory(
 	writer http.ResponseWriter,
 	request *http.Request,
-) {
+) *utils.AppError {
 	slug := chi.URLParam(request, "slug")
 
 	err := controller.categoryService.Delete(slug)
 	if err != nil {
-		utils.HandleError(err, writer)
-		return
+		return err
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
+	return nil
 }

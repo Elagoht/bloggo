@@ -44,7 +44,10 @@ func UpdateToNowQuery(
 	row string,
 	value any,
 ) (string, []any) {
-	return fmt.Sprintf("UPDATE %s SET %s = datetime('now') WHERE %s = ?", table, fieldToUpdate, row), []any{value}
+	return fmt.Sprintf(
+		"UPDATE %s SET %s = datetime('now') WHERE %s = ?",
+		table, fieldToUpdate, row,
+	), []any{value}
 }
 
 func UpdateUpdatedAtQuery(

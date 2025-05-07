@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/Elagoht/bloggo/models"
 	"github.com/Elagoht/bloggo/repositories"
+	"github.com/Elagoht/bloggo/utils"
 )
 
 type CategoryService struct {
@@ -15,13 +16,13 @@ func NewCategoryService() *CategoryService {
 	}
 }
 
-func (service *CategoryService) GetAll() ([]models.ResponseCategoryListItem, error) {
+func (service *CategoryService) GetAll() ([]models.ResponseCategoryListItem, *utils.AppError) {
 	return service.repository.GetAll()
 }
 
 func (service *CategoryService) GetBySlug(
 	slug string,
-) (models.Category, error) {
+) (models.Category, *utils.AppError) {
 	category, err := service.repository.GetBySlug(slug)
 	if err != nil {
 		return models.Category{}, err
@@ -32,7 +33,7 @@ func (service *CategoryService) GetBySlug(
 
 func (service *CategoryService) Create(
 	category models.RequestCategoryCreate,
-) (models.RequestCategoryCreate, error) {
+) (models.RequestCategoryCreate, *utils.AppError) {
 	createdCategory, err := service.repository.Create(category)
 	if err != nil {
 		return models.RequestCategoryCreate{}, err
@@ -44,17 +45,17 @@ func (service *CategoryService) Create(
 func (service *CategoryService) Update(
 	slug string,
 	category models.RequestCategoryUpdate,
-) (models.RequestCategoryUpdate, error) {
+) (models.RequestCategoryUpdate, *utils.AppError) {
 	return service.repository.Update(slug, category)
 }
 
 func (service *CategoryService) Patch(
 	slug string,
 	category models.RequestCategoryUpdate,
-) (models.RequestCategoryUpdate, error) {
+) (models.RequestCategoryUpdate, *utils.AppError) {
 	return service.repository.Patch(slug, category)
 }
 
-func (service *CategoryService) Delete(slug string) error {
+func (service *CategoryService) Delete(slug string) *utils.AppError {
 	return service.repository.Delete(slug)
 }
