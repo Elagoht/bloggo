@@ -18,3 +18,12 @@ func NewCategoryService() *CategoryService {
 func (service *CategoryService) GetAll() ([]models.Category, error) {
 	return service.repository.GetAll()
 }
+
+func (service *CategoryService) GetBySlug(slug string) (models.Category, error) {
+	category, err := service.repository.GetBySlug(slug)
+	if err != nil {
+		return models.Category{}, err
+	}
+
+	return category, nil
+}

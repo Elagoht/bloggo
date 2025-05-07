@@ -37,3 +37,24 @@ func (repository *CategoryRepository) GetAll() ([]models.Category, error) {
 
 	return categories, nil
 }
+
+func (repository *CategoryRepository) GetBySlug(slug string) (models.Category, error) {
+	row := repository.dataBase.QueryRow("SELECT * FROM categories WHERE slug = ?", slug)
+
+	var category models.Category
+
+	err := row.Scan(
+		&category.Id,
+		&category.Name,
+		&category.Slug,
+		&category.Description,
+		&category.Keywords,
+		&category.Spot,
+	)
+
+	if err != nil {
+		return models.Category{}, utils.NewError("category not found")
+	}
+
+	return category, nil
+}

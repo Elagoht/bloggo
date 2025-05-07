@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/Elagoht/bloggo/services"
+	"github.com/Elagoht/bloggo/utils"
+	"github.com/go-chi/chi"
 )
 
 type CategoryController struct {
@@ -25,4 +27,16 @@ func (controller *CategoryController) GetAllCategories(writer http.ResponseWrite
 	}
 
 	json.NewEncoder(writer).Encode(categories)
+}
+
+func (controller *CategoryController) GetCategoryBySlug(writer http.ResponseWriter, request *http.Request) {
+	slug := chi.URLParam(request, "slug")
+
+	category, err := controller.categoryService.GetBySlug(slug)
+	if err != nil {
+		utils.HandleError(err, writer)
+		return
+	}
+
+	json.NewEncoder(writer).Encode(category)
 }
