@@ -7,6 +7,7 @@ import (
 
 	"net/http"
 
+	"github.com/Elagoht/bloggo/controllers"
 	"github.com/Elagoht/bloggo/utils"
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
@@ -26,6 +27,10 @@ func main() {
 	utils.InitDB()
 
 	router := chi.NewRouter()
+
+	categoryController := controllers.NewCategoryController()
+
+	router.Get("/categories", categoryController.GetAllCategories)
 
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 		fmt.Fprintf(writer, "Hello, World!")
