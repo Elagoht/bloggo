@@ -17,16 +17,16 @@ func NewError(message string) *Error {
 	return &Error{Message: message}
 }
 
-func NewErrorWithStatus(error *Error, writer http.ResponseWriter) {
+func NewErrorWithStatus(error *Error, writer http.ResponseWriter, status int) {
 	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusNotFound)
+	writer.WriteHeader(status)
 	json.NewEncoder(writer).Encode(error)
 }
 
 func HandleError(err error, writer http.ResponseWriter) {
 	switch err := err.(type) {
 	case *Error:
-		NewErrorWithStatus(err, writer)
+		NewErrorWithStatus(err, writer, http.StatusInternalServerError)
 	default:
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 	}

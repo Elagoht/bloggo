@@ -10,6 +10,10 @@ func HandleCategories(router *chi.Mux) *chi.Mux {
 
 	router.Get("/api/categories", categoryController.GetAllCategories)
 	router.Get("/api/categories/{slug}", categoryController.GetCategoryBySlug)
+	router.Post("/api/categories", categoryController.CreateCategory)
+	router.Put("/api/categories/{slug}", categoryController.UpdateCategory)
+	router.Patch("/api/categories/{slug}", categoryController.PatchCategory)
+	router.Delete("/api/categories/{slug}", categoryController.DeleteCategory)
 
 	return router
 }

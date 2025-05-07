@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -35,9 +34,12 @@ func main() {
 	router = modules.HandleCategories(router)
 
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Fprintf(writer, "Hello, World!")
+		writer.WriteHeader(http.StatusTeapot)
 	})
 
 	log.Println("Starting server on http://localhost:" + port)
-	http.ListenAndServe(":"+port, router)
+	err = http.ListenAndServe(":"+port, router)
+	if err != nil {
+		log.Fatal("Error starting server: ", err)
+	}
 }
