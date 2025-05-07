@@ -11,7 +11,12 @@ type PatchField struct {
 	Skip  bool
 }
 
-func BuildPatchQuery(table string, idField string, id any, fields []PatchField) (string, []any) {
+func BuildPatchQuery(
+	table string,
+	idField string,
+	id any,
+	fields []PatchField,
+) (string, []any) {
 	setClauses := []string{}
 	args := []any{}
 
@@ -33,10 +38,19 @@ func BuildPatchQuery(table string, idField string, id any, fields []PatchField) 
 	return query, args
 }
 
-func UpdateToNow(table string, idField string, id any) (string, []any) {
-	return fmt.Sprintf("UPDATE %s SET %s = NOW() WHERE %s = ?", table, idField, idField), []any{id}
+func UpdateToNowQuery(
+	table string,
+	fieldToUpdate string,
+	row string,
+	value any,
+) (string, []any) {
+	return fmt.Sprintf("UPDATE %s SET %s = datetime('now') WHERE %s = ?", table, fieldToUpdate, row), []any{value}
 }
 
-func UpdateUpdatedAt(table string, idField string, id any) (string, []any) {
-	return UpdateToNow(table, "updatedAt", id)
+func UpdateUpdatedAtQuery(
+	table string,
+	row string,
+	value any,
+) (string, []any) {
+	return UpdateToNowQuery(table, "updatedAt", row, value)
 }

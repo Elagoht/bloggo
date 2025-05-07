@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"database/sql"
-	"errors"
 
 	"github.com/Elagoht/bloggo/models"
 	"github.com/Elagoht/bloggo/utils"
@@ -127,6 +126,12 @@ func (repository *CategoryRepository) Update(
 		return models.RequestCategoryUpdate{}, err
 	}
 
+	query, args := utils.UpdateUpdatedAtQuery("categories", "slug", slug)
+	_, err = repository.dataBase.Exec(query, args...)
+	if err != nil {
+		return models.RequestCategoryUpdate{}, err
+	}
+
 	return category, nil
 }
 
@@ -161,10 +166,16 @@ func (repository *CategoryRepository) Patch(
 	}
 
 	if rowsAffected == 0 {
-		return models.RequestCategoryUpdate{}, errors.New("category not found")
+		return models.RequestCategoryUpdate{}, utils.NewError("category not found")
 	}
 
 	updatedCategory, err := repository.GetBySlug(slug)
+	if err != nil {
+		return models.RequestCategoryUpdate{}, err
+	}
+
+	query, args = utils.UpdateUpdatedAtQuery("categories", "slug", slug)
+	_, err = repository.dataBase.Exec(query, args...)
 	if err != nil {
 		return models.RequestCategoryUpdate{}, err
 	}
@@ -189,7 +200,7 @@ func (repository *CategoryRepository) Delete(
 	}
 
 	if rowsAffected == 0 {
-		return errors.New("category not found")
+		return utils.NewError("category not found")
 	}
 
 	return nil
