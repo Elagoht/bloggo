@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
-	"net/http"
-
+	"github.com/Elagoht/bloggo/middleware"
 	"github.com/Elagoht/bloggo/modules"
 	"github.com/Elagoht/bloggo/utils"
+
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
 )
@@ -27,6 +28,9 @@ func main() {
 	utils.InitDB()
 
 	router := chi.NewRouter()
+
+	// Apply the middleware
+	router.Use(middleware.JsonContentTypeMiddleware)
 
 	router = modules.HandleCategories(router)
 

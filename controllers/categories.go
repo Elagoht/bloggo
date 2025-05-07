@@ -26,7 +26,6 @@ func (controller *CategoryController) GetAllCategories(writer http.ResponseWrite
 		return
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(categories)
 }
 
@@ -39,6 +38,5 @@ func (controller *CategoryController) GetCategoryBySlug(writer http.ResponseWrit
 		return
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(category)
 }
