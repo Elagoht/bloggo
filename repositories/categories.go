@@ -18,7 +18,7 @@ func NewCategoryRepository() *CategoryRepository {
 }
 
 func (repository *CategoryRepository) GetAll() ([]models.ResponseCategoryListItem, *utils.AppError) {
-	rows, err := repository.dataBase.Query("SELECT id, name, slug FROM categories ORDER BY createdAt DESC")
+	rows, err := repository.dataBase.Query("SELECT id, name, slug FROM categories WHERE deletedAt IS NULL ORDER BY createdAt DESC")
 	if err != nil {
 		return nil, utils.MapDatabaseError(err)
 	}
@@ -43,7 +43,7 @@ func (repository *CategoryRepository) GetAll() ([]models.ResponseCategoryListIte
 }
 
 func (repository *CategoryRepository) GetBySlug(slug string) (models.Category, *utils.AppError) {
-	row := repository.dataBase.QueryRow("SELECT * FROM categories WHERE slug = ?", slug)
+	row := repository.dataBase.QueryRow("SELECT * FROM categories WHERE deletedAt IS NULL AND slug = ?", slug)
 
 	var category models.Category
 
@@ -77,7 +77,7 @@ func (repository *CategoryRepository) Create(
 	}
 	defer statement.Close()
 
-	result, err := statement.Exec(
+	_, err = statement.Exec(
 		category.Name,
 		category.Slug,
 		category.Description,
@@ -88,25 +88,18 @@ func (repository *CategoryRepository) Create(
 		return models.RequestCategoryCreate{}, utils.MapDatabaseError(err)
 	}
 
-	lastInsertId, err := result.LastInsertId()
-	if err != nil {
-		return models.RequestCategoryCreate{}, utils.MapDatabaseError(err)
-	}
-
-	category.Id = int(lastInsertId)
-
 	return category, nil
 }
 
 func (repository *CategoryRepository) Update(
 	slug string,
 	category models.RequestCategoryUpdate,
-) (models.RequestCategoryUpdate, *utils.AppError) {
+) *utils.AppError {
 	statement, err := repository.dataBase.Prepare(
-		"UPDATE categories SET name = ?, slug = ?, description = ?, keywords = ?, spot = ? WHERE slug = ?",
+		"UPDATE categories SET name = ?, slug = ?, description = ?, keywords = ?, spot = ?, updatedAt = datetime('now') WHERE slug = ?",
 	)
 	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
+		return utils.MapDatabaseError(err)
 	}
 	defer statement.Close()
 
@@ -119,71 +112,55 @@ func (repository *CategoryRepository) Update(
 		slug,
 	)
 	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
+		return utils.MapDatabaseError(err)
 	}
 
-	query, args := utils.UpdateUpdatedAtQuery("categories", "slug", slug)
-	_, err = repository.dataBase.Exec(query, args...)
-	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
-	}
-
-	return category, nil
+	return nil
 }
 
 func (repository *CategoryRepository) Patch(
 	slug string,
 	category models.RequestCategoryUpdate,
-) (models.RequestCategoryUpdate, *utils.AppError) {
+) *utils.AppError {
 	fields := []utils.PatchField{
 		{Name: "name", Value: category.Name, Skip: category.Name == ""},
 		{Name: "slug", Value: category.Slug, Skip: category.Slug == ""},
 		{Name: "description", Value: category.Description, Skip: category.Description == ""},
 		{Name: "keywords", Value: category.Keywords, Skip: category.Keywords == ""},
 		{Name: "spot", Value: category.Spot, Skip: category.Spot == ""},
+		{Name: "updatedAt", Value: "datetime('now')", Skip: false},
 	}
 
 	query, args := utils.BuildPatchQuery("categories", "slug", slug, fields)
 
 	statement, err := repository.dataBase.Prepare(query)
 	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
+		return utils.MapDatabaseError(err)
 	}
 	defer statement.Close()
 
 	result, err := statement.Exec(args...)
 	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
+		return utils.MapDatabaseError(err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
+		return utils.MapDatabaseError(err)
 	}
 
 	if rowsAffected == 0 {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
+		return utils.ErrNotFound
 	}
 
-	updatedCategory, err := repository.GetBySlug(slug)
-	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
-	}
-
-	query, args = utils.UpdateUpdatedAtQuery("categories", "slug", slug)
-	_, err = repository.dataBase.Exec(query, args...)
-	if err != nil {
-		return models.RequestCategoryUpdate{}, utils.MapDatabaseError(err)
-	}
-
-	return models.RequestCategoryUpdate{Category: updatedCategory}, nil
+	return nil
 }
 
 func (repository *CategoryRepository) Delete(
 	slug string,
 ) *utils.AppError {
 	result, err := repository.dataBase.Exec(
-		"DELETE FROM categories WHERE slug = ?",
+		"UPDATE categories SET deletedAt = datetime('now') WHERE slug = ?",
 		slug,
 	)
 	if err != nil {

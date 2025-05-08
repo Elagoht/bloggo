@@ -22,7 +22,7 @@ func Handle(function HandlerFuncWithError) http.HandlerFunc {
 				status = http.StatusInternalServerError
 			}
 
-			response := map[string]string{"error": err.Message}
+			response := map[string]string{"message": err.Message}
 			writer.Header().Set("Content-Type", "application/json")
 			writer.WriteHeader(status)
 			json.NewEncoder(writer).Encode(response)

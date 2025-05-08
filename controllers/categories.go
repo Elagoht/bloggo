@@ -79,12 +79,12 @@ func (controller *CategoryController) UpdateCategory(
 		return utils.ErrInternalServer
 	}
 
-	updatedCategory, err := controller.categoryService.Update(slug, category)
+	err := controller.categoryService.Update(slug, category)
 	if err != nil {
 		return err
 	}
 
-	json.NewEncoder(writer).Encode(updatedCategory)
+	writer.WriteHeader(http.StatusNoContent)
 	return nil
 }
 
@@ -100,12 +100,12 @@ func (controller *CategoryController) PatchCategory(
 		return utils.ErrInternalServer
 	}
 
-	patchedCategory, err := controller.categoryService.Patch(slug, category)
+	err := controller.categoryService.Patch(slug, category)
 	if err != nil {
 		return err
 	}
 
-	json.NewEncoder(writer).Encode(patchedCategory)
+	writer.WriteHeader(http.StatusNoContent)
 	return nil
 }
 

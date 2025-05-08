@@ -45,14 +45,14 @@ func (service *CategoryService) Create(
 func (service *CategoryService) Update(
 	slug string,
 	category models.RequestCategoryUpdate,
-) (models.RequestCategoryUpdate, *utils.AppError) {
+) *utils.AppError {
 	return service.repository.Update(slug, category)
 }
 
 func (service *CategoryService) Patch(
 	slug string,
 	category models.RequestCategoryUpdate,
-) (models.RequestCategoryUpdate, *utils.AppError) {
+) *utils.AppError {
 	return service.repository.Patch(slug, category)
 }
 
