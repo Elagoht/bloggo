@@ -46,6 +46,17 @@ type RequestBlog struct {
 	CategoryId  int    `json:"categoryId" validate:"required"`
 }
 
+type RequestBlogPartial struct {
+	Title       string `json:"title" validate:"max=100"`
+	Content     string `json:"content"`
+	Keywords    string `json:"keywords" validate:"max=255"`
+	Description string `json:"description" validate:"max=155"`
+	Spot        string `json:"spot" validate:"max=75"`
+	Cover       string `json:"cover" validate:"url"`
+	Published   bool   `json:"published"`
+	CategoryId  int    `json:"categoryId"`
+}
+
 type ResponseBlogCard struct {
 	Slug         string    `json:"slug"`
 	Title        string    `json:"title"`

@@ -109,3 +109,53 @@ func (repository *BlogRepository) UnpublishBlog(
 ) *utils.AppError {
 	return repository.changePublishedStatus(slug, false)
 }
+
+func (repository *BlogRepository) PatchBlog(
+	slug string,
+	blog models.RequestBlogPartial,
+) *utils.AppError {
+
+	fields := []utils.PatchField{
+		{Name: "title", Value: blog.Title, Skip: blog.Title == ""},
+		{Name: "content", Value: blog.Content, Skip: blog.Content == ""},
+		{Name: "keywords", Value: blog.Keywords, Skip: blog.Keywords == ""},
+		{Name: "description", Value: blog.Description, Skip: blog.Description == ""},
+		{Name: "spot", Value: blog.Spot, Skip: blog.Spot == ""},
+		{Name: "cover", Value: blog.Cover, Skip: blog.Cover == ""},
+		{Name: "published", Value: blog.Published, Skip: !blog.Published},
+		{Name: "categoryId", Value: blog.CategoryId, Skip: blog.CategoryId == 0},
+		{Name: "updatedAt", Value: "datetime('now')", Skip: false},
+	}
+
+	query, args := utils.BuildPatchQuery("blogs", "slug", slug, fields)
+
+	statement, err := repository.dataBase.Prepare(query)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(args...)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+
+	return nil
+}
+
+func (repository *BlogRepository) DeleteBlog(
+	slug string,
+) *utils.AppError {
+	statement, err := repository.dataBase.Prepare(SQLSoftDeleteBlog)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(slug)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+
+	return nil
+}
