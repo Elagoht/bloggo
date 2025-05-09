@@ -67,13 +67,13 @@ func (repository *CategoryRepository) GetBySlug(slug string) (models.Category, *
 }
 
 func (repository *CategoryRepository) Create(
-	category models.RequestCategoryCreate,
-) (models.RequestCategoryCreate, *utils.AppError) {
+	category models.RequestCategory,
+) (models.RequestCategory, *utils.AppError) {
 	statement, err := repository.dataBase.Prepare(
 		"INSERT INTO categories (name, slug, description, keywords, spot) VALUES (?, ?, ?, ?, ?)",
 	)
 	if err != nil {
-		return models.RequestCategoryCreate{}, utils.MapDatabaseError(err)
+		return models.RequestCategory{}, utils.MapDatabaseError(err)
 	}
 	defer statement.Close()
 
@@ -85,7 +85,7 @@ func (repository *CategoryRepository) Create(
 		category.Spot,
 	)
 	if err != nil {
-		return models.RequestCategoryCreate{}, utils.MapDatabaseError(err)
+		return models.RequestCategory{}, utils.MapDatabaseError(err)
 	}
 
 	return category, nil
@@ -93,7 +93,7 @@ func (repository *CategoryRepository) Create(
 
 func (repository *CategoryRepository) Update(
 	slug string,
-	category models.RequestCategoryUpdate,
+	category models.RequestCategory,
 ) *utils.AppError {
 	statement, err := repository.dataBase.Prepare(
 		"UPDATE categories SET name = ?, slug = ?, description = ?, keywords = ?, spot = ?, updatedAt = datetime('now') WHERE slug = ?",
@@ -120,7 +120,7 @@ func (repository *CategoryRepository) Update(
 
 func (repository *CategoryRepository) Patch(
 	slug string,
-	category models.RequestCategoryUpdate,
+	category models.RequestCategoryPartial,
 ) *utils.AppError {
 	fields := []utils.PatchField{
 		{Name: "name", Value: category.Name, Skip: category.Name == ""},

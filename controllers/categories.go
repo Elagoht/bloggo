@@ -52,7 +52,7 @@ func (controller *CategoryController) CreateCategory(
 	writer http.ResponseWriter,
 	request *http.Request,
 ) *utils.AppError {
-	var category models.RequestCategoryCreate
+	var category models.RequestCategory
 	bodyErr := json.NewDecoder(request.Body).Decode(&category)
 	if bodyErr != nil {
 		return utils.ErrInternalServer
@@ -73,7 +73,7 @@ func (controller *CategoryController) UpdateCategory(
 ) *utils.AppError {
 	slug := chi.URLParam(request, "slug")
 
-	var category models.RequestCategoryUpdate
+	var category models.RequestCategory
 	bodyErr := json.NewDecoder(request.Body).Decode(&category)
 	if bodyErr != nil {
 		return utils.ErrInternalServer
@@ -94,7 +94,7 @@ func (controller *CategoryController) PatchCategory(
 ) *utils.AppError {
 	slug := chi.URLParam(request, "slug")
 
-	var category models.RequestCategoryUpdate
+	var category models.RequestCategoryPartial
 	bodyErr := json.NewDecoder(request.Body).Decode(&category)
 	if bodyErr != nil {
 		return utils.ErrInternalServer
