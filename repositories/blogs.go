@@ -49,8 +49,15 @@ func (repository *BlogRepository) GetBySlug(
 
 	var blog models.ResponseBlog
 	err := row.Scan(
-		&blog.Slug, &blog.Title, &blog.Content, &blog.Keywords, &blog.Description,
-		&blog.Spot, &blog.Cover, &blog.PublishedAt, &blog.CategoryName,
+		&blog.Slug,
+		&blog.Title,
+		&blog.Content,
+		&blog.Keywords,
+		&blog.Description,
+		&blog.Spot,
+		&blog.Cover,
+		&blog.PublishedAt,
+		&blog.CategoryName,
 		&blog.CategorySlug,
 	)
 	if err != nil {

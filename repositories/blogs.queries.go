@@ -11,7 +11,7 @@ const (
 	`
 	// Get a blog by slug if it is not deleted
 	SQLGetBlogBySlug = `
-		SELECT b.title, b.slug, b.spot, b.cover, b.readTime, b.readCount, b.publishedAt, c.name, c.slug
+		SELECT b.slug, b.title, b.content, b.keywords, b.description, b.spot, b.cover, b.publishedAt, c.name, c.slug
 		FROM blogs b
 		INNER JOIN categories c ON b.categoryId = c.id
 		WHERE b.slug = ? AND b.deletedAt IS NULL AND c.deletedAt IS NULL
