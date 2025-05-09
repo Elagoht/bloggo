@@ -13,6 +13,6 @@ func HandleBlogs(router *chi.Mux) {
 
 	blogRouter.Get("/", middleware.Handle(blogController.GetAllBlogs))
 	blogRouter.Get("/{slug}", middleware.Handle(blogController.GetBlogBySlug))
-
+	blogRouter.Post("/", middleware.Handle(blogController.CreateBlog))
 	router.Mount("/api/blogs", blogRouter)
 }

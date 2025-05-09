@@ -26,10 +26,10 @@ func (service *CategoryService) GetAll() ([]models.ResponseCategoryListItem, *ut
 
 func (service *CategoryService) GetBySlug(
 	slug string,
-) (models.Category, *utils.AppError) {
+) (models.ResponseCategory, *utils.AppError) {
 	category, err := service.repository.GetBySlug(slug)
 	if err != nil {
-		return models.Category{}, err
+		return models.ResponseCategory{}, err
 	}
 
 	return category, nil
@@ -37,18 +37,18 @@ func (service *CategoryService) GetBySlug(
 
 func (service *CategoryService) Create(
 	category models.RequestCategory,
-) (models.RequestCategory, *utils.AppError) {
+) *utils.AppError {
 	validationErr := service.validate.Struct(category)
 	if validationErr != nil {
-		return models.RequestCategory{}, utils.ErrBadRequest
+		return utils.ErrBadRequest
 	}
 
-	createdCategory, err := service.repository.Create(category)
+	err := service.repository.CreateCategory(category)
 	if err != nil {
-		return models.RequestCategory{}, err
+		return err
 	}
 
-	return createdCategory, nil
+	return nil
 }
 
 func (service *CategoryService) Update(
@@ -60,7 +60,7 @@ func (service *CategoryService) Update(
 		return utils.ErrBadRequest
 	}
 
-	return service.repository.Update(slug, category)
+	return service.repository.UpdateCategory(slug, category)
 }
 
 func (service *CategoryService) Patch(
@@ -72,9 +72,9 @@ func (service *CategoryService) Patch(
 		return utils.ErrBadRequest
 	}
 
-	return service.repository.Patch(slug, category)
+	return service.repository.PatchCategory(slug, category)
 }
 
 func (service *CategoryService) Delete(slug string) *utils.AppError {
-	return service.repository.Delete(slug)
+	return service.repository.SoftDeleteCategory(slug)
 }

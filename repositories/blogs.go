@@ -18,13 +18,7 @@ func NewBlogRepository() *BlogRepository {
 }
 
 func (repository *BlogRepository) GetAll() ([]models.ResponseBlogCard, *utils.AppError) {
-	rows, err := repository.dataBase.Query(`
-		SELECT b.title, b.slug, b.spot, b.cover, b.readTime, b.readCount, b.publishedAt, c.name, c.slug
-		FROM blogs b
-		INNER JOIN categories c ON b.categoryId = c.id
-		WHERE b.deletedAt IS NULL
-		ORDER BY b.createdAt DESC
-	`)
+	rows, err := repository.dataBase.Query(SQLGetAllBlogs)
 	if err != nil {
 		return nil, utils.MapDatabaseError(err)
 	}
@@ -35,14 +29,8 @@ func (repository *BlogRepository) GetAll() ([]models.ResponseBlogCard, *utils.Ap
 	for rows.Next() {
 		var blog models.ResponseBlogCard
 		err = rows.Scan(
-			&blog.Title,
-			&blog.Slug,
-			&blog.Spot,
-			&blog.Cover,
-			&blog.ReadTime,
-			&blog.ReadCount,
-			&blog.PublishedAt,
-			&blog.CategoryName,
+			&blog.Title, &blog.Slug, &blog.Spot, &blog.Cover, &blog.ReadTime,
+			&blog.ReadCount, &blog.PublishedAt, &blog.CategoryName,
 			&blog.CategorySlug,
 		)
 		if err != nil {
@@ -57,24 +45,12 @@ func (repository *BlogRepository) GetAll() ([]models.ResponseBlogCard, *utils.Ap
 func (repository *BlogRepository) GetBySlug(
 	slug string,
 ) (models.ResponseBlog, *utils.AppError) {
-	row := repository.dataBase.QueryRow(`
-		SELECT b.title, b.slug, b.spot, b.cover, b.readTime, b.readCount, b.publishedAt, c.name, c.slug
-		FROM blogs b
-		INNER JOIN categories c ON b.categoryId = c.id
-		WHERE b.slug = ?
-	`, slug)
+	row := repository.dataBase.QueryRow(SQLGetBlogBySlug, slug)
 
 	var blog models.ResponseBlog
 	err := row.Scan(
-		&blog.Slug,
-		&blog.Title,
-		&blog.Content,
-		&blog.Keywords,
-		&blog.Description,
-		&blog.Spot,
-		&blog.Cover,
-		&blog.PublishedAt,
-		&blog.CategoryName,
+		&blog.Slug, &blog.Title, &blog.Content, &blog.Keywords, &blog.Description,
+		&blog.Spot, &blog.Cover, &blog.PublishedAt, &blog.CategoryName,
 		&blog.CategorySlug,
 	)
 	if err != nil {
@@ -82,4 +58,24 @@ func (repository *BlogRepository) GetBySlug(
 	}
 
 	return blog, nil
+}
+
+func (repository *BlogRepository) CreateBlog(
+	blog models.RequestBlog,
+) *utils.AppError {
+	statement, err := repository.dataBase.Prepare(SQLCreateBlog)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(
+		blog.Title, blog.Slug, blog.Spot, blog.Content, blog.Keywords, blog.Description,
+		blog.Cover, blog.CalculateReadTime(), blog.Published, blog.CategoryId,
+		blog.CalculatePublishedAt(),
+	)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+	return nil
 }

@@ -1,6 +1,13 @@
 package models
 
-import "time"
+import (
+	"strings"
+	"time"
+)
+
+const (
+	wordsPerMinute = 180
+)
 
 type Blog struct {
 	// Identifiers
@@ -62,4 +69,15 @@ type ResponseBlog struct {
 	PublishedAt  time.Time `json:"publishedAt"`
 	CategoryName string    `json:"categoryName"`
 	CategorySlug string    `json:"categorySlug"`
+}
+
+func (blog *RequestBlog) CalculateReadTime() int {
+	return len(strings.Split(blog.Content, " ")) / wordsPerMinute
+}
+
+func (blog *RequestBlog) CalculatePublishedAt() time.Time {
+	if blog.Published {
+		return time.Now()
+	}
+	return time.Time{}
 }

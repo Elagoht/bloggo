@@ -18,7 +18,7 @@ func NewCategoryRepository() *CategoryRepository {
 }
 
 func (repository *CategoryRepository) GetAll() ([]models.ResponseCategoryListItem, *utils.AppError) {
-	rows, err := repository.dataBase.Query("SELECT id, name, slug FROM categories WHERE deletedAt IS NULL ORDER BY createdAt DESC")
+	rows, err := repository.dataBase.Query(SQLGetAllCategories)
 	if err != nil {
 		return nil, utils.MapDatabaseError(err)
 	}
@@ -29,7 +29,6 @@ func (repository *CategoryRepository) GetAll() ([]models.ResponseCategoryListIte
 	for rows.Next() {
 		var category models.ResponseCategoryListItem
 		err := rows.Scan(
-			&category.Id,
 			&category.Name,
 			&category.Slug,
 		)
@@ -42,38 +41,36 @@ func (repository *CategoryRepository) GetAll() ([]models.ResponseCategoryListIte
 	return categories, nil
 }
 
-func (repository *CategoryRepository) GetBySlug(slug string) (models.Category, *utils.AppError) {
-	row := repository.dataBase.QueryRow("SELECT * FROM categories WHERE deletedAt IS NULL AND slug = ?", slug)
+func (repository *CategoryRepository) GetBySlug(
+	slug string,
+) (models.ResponseCategory, *utils.AppError) {
+	row := repository.dataBase.QueryRow(SQLGetCategoryBySlug, slug)
 
-	var category models.Category
+	var category models.ResponseCategory
 
 	err := row.Scan(
-		&category.Id,
 		&category.Name,
 		&category.Slug,
 		&category.Description,
 		&category.Keywords,
 		&category.Spot,
-		&category.CreatedAt,
-		&category.UpdatedAt,
-		&category.DeletedAt,
 	)
 
 	if err != nil {
-		return models.Category{}, utils.MapDatabaseError(err)
+		return models.ResponseCategory{}, utils.MapDatabaseError(err)
 	}
 
 	return category, nil
 }
 
-func (repository *CategoryRepository) Create(
+func (repository *CategoryRepository) CreateCategory(
 	category models.RequestCategory,
-) (models.RequestCategory, *utils.AppError) {
+) *utils.AppError {
 	statement, err := repository.dataBase.Prepare(
-		"INSERT INTO categories (name, slug, description, keywords, spot) VALUES (?, ?, ?, ?, ?)",
+		SQLCreateCategory,
 	)
 	if err != nil {
-		return models.RequestCategory{}, utils.MapDatabaseError(err)
+		return utils.MapDatabaseError(err)
 	}
 	defer statement.Close()
 
@@ -85,19 +82,17 @@ func (repository *CategoryRepository) Create(
 		category.Spot,
 	)
 	if err != nil {
-		return models.RequestCategory{}, utils.MapDatabaseError(err)
+		return utils.MapDatabaseError(err)
 	}
 
-	return category, nil
+	return nil
 }
 
-func (repository *CategoryRepository) Update(
+func (repository *CategoryRepository) UpdateCategory(
 	slug string,
 	category models.RequestCategory,
 ) *utils.AppError {
-	statement, err := repository.dataBase.Prepare(
-		"UPDATE categories SET name = ?, slug = ?, description = ?, keywords = ?, spot = ?, updatedAt = datetime('now') WHERE slug = ?",
-	)
+	statement, err := repository.dataBase.Prepare(SQLUpdateCategory)
 	if err != nil {
 		return utils.MapDatabaseError(err)
 	}
@@ -118,7 +113,7 @@ func (repository *CategoryRepository) Update(
 	return nil
 }
 
-func (repository *CategoryRepository) Patch(
+func (repository *CategoryRepository) PatchCategory(
 	slug string,
 	category models.RequestCategoryPartial,
 ) *utils.AppError {
@@ -156,13 +151,10 @@ func (repository *CategoryRepository) Patch(
 	return nil
 }
 
-func (repository *CategoryRepository) Delete(
+func (repository *CategoryRepository) SoftDeleteCategory(
 	slug string,
 ) *utils.AppError {
-	result, err := repository.dataBase.Exec(
-		"UPDATE categories SET deletedAt = datetime('now') WHERE slug = ?",
-		slug,
-	)
+	result, err := repository.dataBase.Exec(SQLSoftDeleteCategory, slug)
 	if err != nil {
 		return utils.MapDatabaseError(err)
 	}

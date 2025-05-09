@@ -1,6 +1,8 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/Elagoht/bloggo/models"
 	"github.com/Elagoht/bloggo/pipes"
 	"github.com/Elagoht/bloggo/repositories"
@@ -26,4 +28,16 @@ func (service *BlogService) GetAll() ([]models.ResponseBlogCard, *utils.AppError
 
 func (service *BlogService) GetBySlug(slug string) (models.ResponseBlog, *utils.AppError) {
 	return service.repository.GetBySlug(slug)
+}
+
+func (service *BlogService) CreateBlog(blog models.RequestBlog) *utils.AppError {
+	err := service.validate.Struct(blog)
+	if err != nil {
+		return utils.NewAppError(
+			http.StatusBadRequest,
+			"Invalid request body",
+			err,
+		)
+	}
+	return service.repository.CreateBlog(blog)
 }

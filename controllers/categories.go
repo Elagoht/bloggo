@@ -58,12 +58,12 @@ func (controller *CategoryController) CreateCategory(
 		return utils.ErrInternalServer
 	}
 
-	createdCategory, err := controller.categoryService.Create(category)
+	err := controller.categoryService.Create(category)
 	if err != nil {
 		return err
 	}
 
-	json.NewEncoder(writer).Encode(createdCategory)
+	writer.WriteHeader(http.StatusCreated)
 	return nil
 }
 
