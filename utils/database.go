@@ -79,13 +79,13 @@ var initialQueries = []string{
 
 		createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-		releaseAt DATETIME DEFAULT NULL,
+		publishedAt DATETIME DEFAULT NULL,
 		deletedAt DATETIME DEFAULT NULL,
 
 		readTime INTEGER NOT NULL DEFAULT 0,
 		readCount INTEGER NOT NULL DEFAULT 0,
 
-		category_id INTEGER,
-		FOREIGN KEY (category_id) REFERENCES categories(id)
+		categoryId INTEGER,
+		FOREIGN KEY (categoryId) REFERENCES categories(id)
 	);`,
 }

@@ -27,8 +27,12 @@ func Handle(function HandlerFuncWithError) http.HandlerFunc {
 			writer.WriteHeader(status)
 			json.NewEncoder(writer).Encode(response)
 
-			if err.Err != nil {
-				log.Println("Internal server error:", err.Err.Error())
+			if err.Err != nil || err.Status == http.StatusInternalServerError {
+				if err.Err != nil {
+					log.Printf("Internal server error: %v", err.Err)
+				} else {
+					log.Printf("Internal server error: unknown error")
+				}
 			}
 		}
 	}

@@ -3,15 +3,18 @@ package models
 import "time"
 
 type Category struct {
-	Id          int        `json:"id" validate:"required"`
-	Name        string     `json:"name" validate:"required,max=100"`
-	Slug        string     `json:"slug" validate:"required,max=100,slug"`
-	Description string     `json:"description" validate:"required,max=155"`
-	Keywords    string     `json:"keywords" validate:"required,max=255"`
-	Spot        string     `json:"spot" validate:"required,max=75"`
-	CreatedAt   time.Time  `json:"createdAt" validate:"required"`
-	UpdatedAt   time.Time  `json:"updatedAt" validate:"required"`
-	DeletedAt   *time.Time `json:"deletedAt,omitempty"`
+	// Identifiers
+	Id   int    `json:"id" validate:"required"`
+	Slug string `json:"slug" validate:"required,max=100,slug"`
+	// Name and metadata
+	Name        string `json:"name" validate:"required,max=100"`
+	Description string `json:"description" validate:"required,max=155"`
+	Spot        string `json:"spot" validate:"required,max=75"`
+	Keywords    string `json:"keywords" validate:"required,max=255"`
+	// Timestamps
+	CreatedAt time.Time  `json:"createdAt" validate:"required"`
+	UpdatedAt time.Time  `json:"updatedAt" validate:"required"`
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 }
 
 type CategoryWithBlogs struct {

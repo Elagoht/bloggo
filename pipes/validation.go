@@ -12,13 +12,13 @@ func slugValidation(fl validator.FieldLevel) bool {
 	return slugRegex.MatchString(fl.Field().String())
 }
 
-func CreateValidator() *validator.Validate {
+func createValidator() *validator.Validate {
 	validate := validator.New()
 	validate.RegisterValidation("slug", slugValidation)
 	return validate
 }
 
-var defaultValidator = CreateValidator()
+var defaultValidator = createValidator()
 
 func GetValidator() *validator.Validate {
 	return defaultValidator

@@ -6,15 +6,17 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func HandleCategories(router *chi.Mux) *chi.Mux {
+func HandleCategories(router *chi.Mux) {
 	categoryController := controllers.NewCategoryController()
 
-	router.Get("/api/categories", middleware.Handle(categoryController.GetAllCategories))
-	router.Get("/api/categories/{slug}", middleware.Handle(categoryController.GetCategoryBySlug))
-	router.Post("/api/categories", middleware.Handle(categoryController.CreateCategory))
-	router.Put("/api/categories/{slug}", middleware.Handle(categoryController.UpdateCategory))
-	router.Patch("/api/categories/{slug}", middleware.Handle(categoryController.PatchCategory))
-	router.Delete("/api/categories/{slug}", middleware.Handle(categoryController.DeleteCategory))
+	categoryRouter := chi.NewRouter()
 
-	return router
+	categoryRouter.Get("/", middleware.Handle(categoryController.GetAllCategories))
+	categoryRouter.Get("/{slug}", middleware.Handle(categoryController.GetCategoryBySlug))
+	categoryRouter.Post("/", middleware.Handle(categoryController.CreateCategory))
+	categoryRouter.Put("/{slug}", middleware.Handle(categoryController.UpdateCategory))
+	categoryRouter.Patch("/{slug}", middleware.Handle(categoryController.PatchCategory))
+	categoryRouter.Delete("/{slug}", middleware.Handle(categoryController.DeleteCategory))
+
+	router.Mount("/api/categories", categoryRouter)
 }
