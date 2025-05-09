@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Elagoht/bloggo/frontend"
 	"github.com/Elagoht/bloggo/middleware"
 	"github.com/Elagoht/bloggo/modules"
 	"github.com/Elagoht/bloggo/utils"
@@ -37,6 +38,9 @@ func main() {
 	// Mount the modules
 	modules.HandleCategories(router)
 	modules.HandleBlogs(router)
+
+	// Mount the frontend router
+	frontend.FrontendRouter(router)
 
 	// Start the server
 	log.Println("Starting server on http://localhost:" + port)
