@@ -14,5 +14,10 @@ func HandleBlogs(router *chi.Mux) {
 	blogRouter.Get("/", middleware.Handle(blogController.GetAllBlogs))
 	blogRouter.Get("/{slug}", middleware.Handle(blogController.GetBlogBySlug))
 	blogRouter.Post("/", middleware.Handle(blogController.CreateBlog))
+	blogRouter.Patch("/{slug}/publish", middleware.Handle(blogController.PublishBlog))
+	blogRouter.Patch("/{slug}/unpublish", middleware.Handle(blogController.UnpublishBlog))
+	blogRouter.Patch("/{slug}", middleware.Handle(blogController.UpdateBlog))
+	blogRouter.Delete("/{slug}", middleware.Handle(blogController.DeleteBlog))
+
 	router.Mount("/api/blogs", blogRouter)
 }

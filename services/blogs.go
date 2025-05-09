@@ -41,3 +41,19 @@ func (service *BlogService) CreateBlog(blog models.RequestBlog) *utils.AppError 
 	}
 	return service.repository.CreateBlog(blog)
 }
+
+func (service *BlogService) PublishBlog(slug string) *utils.AppError {
+	return service.repository.PublishBlog(slug)
+}
+
+func (service *BlogService) UnpublishBlog(slug string) *utils.AppError {
+	return service.repository.UnpublishBlog(slug)
+}
+
+func (service *BlogService) UpdateBlog(slug string, blog models.RequestBlogPartial) *utils.AppError {
+	return service.repository.PatchBlog(slug, blog)
+}
+
+func (service *BlogService) DeleteBlog(slug string) *utils.AppError {
+	return service.repository.DeleteBlog(slug)
+}

@@ -66,3 +66,65 @@ func (controller *BlogController) CreateBlog(
 	writer.WriteHeader(http.StatusCreated)
 	return nil
 }
+
+func (controller *BlogController) PublishBlog(
+	writer http.ResponseWriter,
+	request *http.Request,
+) *utils.AppError {
+	slug := chi.URLParam(request, "slug")
+
+	err := controller.service.PublishBlog(slug)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (controller *BlogController) UnpublishBlog(
+	writer http.ResponseWriter,
+	request *http.Request,
+) *utils.AppError {
+	slug := chi.URLParam(request, "slug")
+
+	err := controller.service.UnpublishBlog(slug)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (controller *BlogController) UpdateBlog(
+	writer http.ResponseWriter,
+	request *http.Request,
+) *utils.AppError {
+	slug := chi.URLParam(request, "slug")
+
+	var blog models.RequestBlogPartial
+	bodyErr := json.NewDecoder(request.Body).Decode(&blog)
+	if bodyErr != nil {
+		return utils.ErrBadRequest
+	}
+
+	err := controller.service.UpdateBlog(slug, blog)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (controller *BlogController) DeleteBlog(
+	writer http.ResponseWriter,
+	request *http.Request,
+) *utils.AppError {
+	slug := chi.URLParam(request, "slug")
+
+	err := controller.service.DeleteBlog(slug)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
