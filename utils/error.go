@@ -52,6 +52,6 @@ func MapDatabaseError(err error) *AppError {
 	case errors.Is(err, sqlite3.ErrConstraintNotNull):
 		return ErrBadRequest
 	default:
-		return ErrInternalServer
+		return NewAppError(http.StatusInternalServerError, "Internal server error", err)
 	}
 }
