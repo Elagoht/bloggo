@@ -14,14 +14,19 @@ import (
 func FrontendRouter(router *chi.Mux) {
 	frontendRouter := chi.NewRouter()
 
-	// Handle specific routes first
-	frontendRouter.Get("/", func(writer http.ResponseWriter, request *http.Request) {
+	frontendRouter.Get("/", func(
+		writer http.ResponseWriter,
+		request *http.Request,
+	) {
 		render(writer, request, "pages/index.html", map[string]any{
 			"Title": "Bloggo - Blog With Go",
 		})
 	})
 
-	frontendRouter.Get("/login", func(writer http.ResponseWriter, request *http.Request) {
+	frontendRouter.Get("/login", func(
+		writer http.ResponseWriter,
+		request *http.Request,
+	) {
 		render(writer, request, "pages/login/index.html", map[string]any{
 			"Title": "Bloggo - Login",
 		})
