@@ -21,16 +21,10 @@ const (
 		INSERT INTO blogs (title, slug, spot, content, keywords, description, cover, readTime, published, categoryId, publishedAt, updatedAt)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
 	`
-	// Publish a blog
-	SQLPublishBlog = `
+	// Change published status of a blog
+	SQLChangePublishedStatus = `
 		UPDATE blogs
-		SET published = 1, publishedAt = datetime('now'), updatedAt = datetime('now')
-		WHERE slug = ?
-	`
-	// Unpublish a blog
-	SQLUnpublishBlog = `
-		UPDATE blogs
-		SET published = 0, updatedAt = datetime('now')
+		SET published = ?, publishedAt = datetime('now'), updatedAt = datetime('now')
 		WHERE slug = ?
 	`
 	// Soft delete a blog

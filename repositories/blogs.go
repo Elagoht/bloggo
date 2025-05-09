@@ -79,3 +79,33 @@ func (repository *BlogRepository) CreateBlog(
 	}
 	return nil
 }
+
+func (repository *BlogRepository) changePublishedStatus(
+	slug string,
+	published bool,
+) *utils.AppError {
+	statement, err := repository.dataBase.Prepare(SQLChangePublishedStatus)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(published, slug)
+	if err != nil {
+		return utils.MapDatabaseError(err)
+	}
+
+	return nil
+}
+
+func (repository *BlogRepository) PublishBlog(
+	slug string,
+) *utils.AppError {
+	return repository.changePublishedStatus(slug, true)
+}
+
+func (repository *BlogRepository) UnpublishBlog(
+	slug string,
+) *utils.AppError {
+	return repository.changePublishedStatus(slug, false)
+}
