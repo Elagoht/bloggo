@@ -67,27 +67,6 @@ func (controller *CategoryController) CreateCategory(
 	return nil
 }
 
-func (controller *CategoryController) UpdateCategory(
-	writer http.ResponseWriter,
-	request *http.Request,
-) *utils.AppError {
-	slug := chi.URLParam(request, "slug")
-
-	var category models.RequestCategory
-	bodyErr := json.NewDecoder(request.Body).Decode(&category)
-	if bodyErr != nil {
-		return utils.ErrInternalServer
-	}
-
-	err := controller.categoryService.Update(slug, category)
-	if err != nil {
-		return err
-	}
-
-	writer.WriteHeader(http.StatusNoContent)
-	return nil
-}
-
 func (controller *CategoryController) PatchCategory(
 	writer http.ResponseWriter,
 	request *http.Request,

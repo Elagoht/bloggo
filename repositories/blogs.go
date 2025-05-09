@@ -70,9 +70,10 @@ func (repository *BlogRepository) CreateBlog(
 	defer statement.Close()
 
 	_, err = statement.Exec(
-		blog.Title, blog.Slug, blog.Spot, blog.Content, blog.Keywords, blog.Description,
-		blog.Cover, blog.CalculateReadTime(), blog.Published, blog.CategoryId,
-		blog.CalculatePublishedAt(),
+		blog.Title, utils.GenerateSlug(blog.Title), blog.Spot, blog.Content,
+		blog.Keywords, blog.Description, blog.Cover,
+		utils.GetReadTime(blog.Content), blog.Published, blog.CategoryId,
+		utils.CalculatePublishedAt(blog.Published),
 	)
 	if err != nil {
 		return utils.MapDatabaseError(err)
@@ -117,6 +118,7 @@ func (repository *BlogRepository) PatchBlog(
 
 	fields := []utils.PatchField{
 		{Name: "title", Value: blog.Title, Skip: blog.Title == ""},
+		{Name: "slug", Value: utils.GenerateSlug(blog.Title), Skip: blog.Title == ""},
 		{Name: "content", Value: blog.Content, Skip: blog.Content == ""},
 		{Name: "keywords", Value: blog.Keywords, Skip: blog.Keywords == ""},
 		{Name: "description", Value: blog.Description, Skip: blog.Description == ""},

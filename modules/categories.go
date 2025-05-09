@@ -14,7 +14,6 @@ func HandleCategories(router *chi.Mux) {
 	categoryRouter.Get("/", middleware.Handle(categoryController.GetAllCategories))
 	categoryRouter.Get("/{slug}", middleware.Handle(categoryController.GetCategoryBySlug))
 	categoryRouter.Post("/", middleware.Handle(categoryController.CreateCategory))
-	categoryRouter.Put("/{slug}", middleware.Handle(categoryController.UpdateCategory))
 	categoryRouter.Patch("/{slug}", middleware.Handle(categoryController.PatchCategory))
 	categoryRouter.Delete("/{slug}", middleware.Handle(categoryController.DeleteCategory))
 

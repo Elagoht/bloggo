@@ -51,18 +51,6 @@ func (service *CategoryService) Create(
 	return nil
 }
 
-func (service *CategoryService) Update(
-	slug string,
-	category models.RequestCategory,
-) *utils.AppError {
-	validationErr := service.validate.Struct(category)
-	if validationErr != nil {
-		return utils.ErrBadRequest
-	}
-
-	return service.repository.UpdateCategory(slug, category)
-}
-
 func (service *CategoryService) Patch(
 	slug string,
 	category models.RequestCategoryPartial,

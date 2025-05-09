@@ -76,35 +76,10 @@ func (repository *CategoryRepository) CreateCategory(
 
 	_, err = statement.Exec(
 		category.Name,
-		category.Slug,
+		utils.GenerateSlug(category.Name),
 		category.Description,
 		category.Keywords,
 		category.Spot,
-	)
-	if err != nil {
-		return utils.MapDatabaseError(err)
-	}
-
-	return nil
-}
-
-func (repository *CategoryRepository) UpdateCategory(
-	slug string,
-	category models.RequestCategory,
-) *utils.AppError {
-	statement, err := repository.dataBase.Prepare(SQLUpdateCategory)
-	if err != nil {
-		return utils.MapDatabaseError(err)
-	}
-	defer statement.Close()
-
-	_, err = statement.Exec(
-		category.Name,
-		category.Slug,
-		category.Description,
-		category.Keywords,
-		category.Spot,
-		slug,
 	)
 	if err != nil {
 		return utils.MapDatabaseError(err)
@@ -119,7 +94,7 @@ func (repository *CategoryRepository) PatchCategory(
 ) *utils.AppError {
 	fields := []utils.PatchField{
 		{Name: "name", Value: category.Name, Skip: category.Name == ""},
-		{Name: "slug", Value: category.Slug, Skip: category.Slug == ""},
+		{Name: "slug", Value: utils.GenerateSlug(category.Name), Skip: category.Name == ""},
 		{Name: "description", Value: category.Description, Skip: category.Description == ""},
 		{Name: "keywords", Value: category.Keywords, Skip: category.Keywords == ""},
 		{Name: "spot", Value: category.Spot, Skip: category.Spot == ""},

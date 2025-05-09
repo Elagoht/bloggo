@@ -1,12 +1,7 @@
 package models
 
 import (
-	"strings"
 	"time"
-)
-
-const (
-	wordsPerMinute = 180
 )
 
 type Blog struct {
@@ -36,7 +31,6 @@ type Blog struct {
 
 type RequestBlog struct {
 	Title       string `json:"title" validate:"required,max=100"`
-	Slug        string `json:"slug" validate:"required,max=100,slug"`
 	Content     string `json:"content" validate:"required"`
 	Keywords    string `json:"keywords" validate:"required,max=255"`
 	Description string `json:"description" validate:"required,max=155"`
@@ -47,14 +41,14 @@ type RequestBlog struct {
 }
 
 type RequestBlogPartial struct {
-	Title       string `json:"title" validate:"max=100"`
-	Content     string `json:"content"`
-	Keywords    string `json:"keywords" validate:"max=255"`
-	Description string `json:"description" validate:"max=155"`
-	Spot        string `json:"spot" validate:"max=75"`
-	Cover       string `json:"cover" validate:"url"`
-	Published   bool   `json:"published"`
-	CategoryId  int    `json:"categoryId"`
+	Title       string `json:"title,omitempty" validate:"max=100"`
+	Content     string `json:"content,omitempty"`
+	Keywords    string `json:"keywords,omitempty" validate:"max=255"`
+	Description string `json:"description,omitempty" validate:"max=155"`
+	Spot        string `json:"spot,omitempty" validate:"max=75"`
+	Cover       string `json:"cover,omitempty" validate:"url"`
+	Published   bool   `json:"published,omitempty"`
+	CategoryId  int    `json:"categoryId,omitempty"`
 }
 
 type ResponseBlogCard struct {
@@ -80,15 +74,4 @@ type ResponseBlog struct {
 	PublishedAt  time.Time `json:"publishedAt"`
 	CategoryName string    `json:"categoryName"`
 	CategorySlug string    `json:"categorySlug"`
-}
-
-func (blog *RequestBlog) CalculateReadTime() int {
-	return len(strings.Split(blog.Content, " ")) / wordsPerMinute
-}
-
-func (blog *RequestBlog) CalculatePublishedAt() time.Time {
-	if blog.Published {
-		return time.Now()
-	}
-	return time.Time{}
 }
