@@ -1,5 +1,5 @@
 body {
-  background-image: url("/assets/background.webp");
+  background-image: url("/statics/assets/background.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -72,12 +72,12 @@ body {
   color: #4b5563;
 }
 
-.forgot-password {
+.forgot-passphrase {
   color: #2563eb;
   text-decoration: none;
 }
 
-.forgot-password:hover {
+.forgot-passphrase:hover {
   text-decoration: underline;
 }
 

@@ -14,19 +14,13 @@ import (
 func FrontendRouter(router *chi.Mux) {
 	frontendRouter := chi.NewRouter()
 
-	frontendRouter.Get("/", func(
-		writer http.ResponseWriter,
-		request *http.Request,
-	) {
+	frontendRouter.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 		render(writer, request, "pages/index.html", map[string]any{
 			"Title": "Bloggo - Blog With Go",
 		})
 	})
 
-	frontendRouter.Get("/login", func(
-		writer http.ResponseWriter,
-		request *http.Request,
-	) {
+	frontendRouter.Get("/auth/login", func(writer http.ResponseWriter, request *http.Request) {
 		render(writer, request, "pages/login/index.html", map[string]any{
 			"Title": "Bloggo - Login",
 		})
@@ -34,7 +28,7 @@ func FrontendRouter(router *chi.Mux) {
 
 	// Serve static files last
 	fileServer := http.FileServer(http.Dir("statics"))
-	frontendRouter.Handle("/*", fileServer)
+	frontendRouter.Handle("/*", http.StripPrefix("/statics", fileServer))
 
 	router.Mount("/", frontendRouter)
 }

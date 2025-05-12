@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Elagoht/bloggo/frontend"
+	"github.com/Elagoht/bloggo/guards"
 	"github.com/Elagoht/bloggo/middleware"
 	"github.com/Elagoht/bloggo/modules"
 	"github.com/Elagoht/bloggo/utils"
@@ -35,9 +36,13 @@ func main() {
 	// Apply the middleware
 	router.Use(middleware.JsonContentTypeMiddleware)
 
+	// Apply the guards
+	router.Use(guards.AuthorizationGuard)
+
 	// Mount the modules
 	modules.HandleCategories(router)
 	modules.HandleBlogs(router)
+	modules.HandleAuth(router)
 
 	// Mount the frontend router
 	frontend.FrontendRouter(router)
