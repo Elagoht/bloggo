@@ -49,7 +49,7 @@ func AuthorizationGuard(next http.Handler) http.Handler {
 		}
 
 		if !validated && !isPublic {
-			redirectToLogin(writer, request, "invalid or missing toke")
+			redirectToLogin(writer, request)
 			return
 		}
 
@@ -60,7 +60,6 @@ func AuthorizationGuard(next http.Handler) http.Handler {
 func redirectToLogin(
 	writer http.ResponseWriter,
 	request *http.Request,
-	message string,
 ) {
 	// Delete the token cookie
 	http.SetCookie(writer, &http.Cookie{
