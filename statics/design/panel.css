@@ -57,6 +57,12 @@
   font-weight: 600;
 }
 
+.panel-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* Navigation styles */
 #panel-nav {
   display: flex;
