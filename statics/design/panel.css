@@ -1,0 +1,121 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Light theme (default) */
+:root {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --button-bg: #e53e3e;
+  --button-hover: #c53030;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --button-bg: #fc8181;
+    --button-hover: #f56565;
+  }
+}
+
+/* Panel container */
+#panel {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Header styles */
+#panel-header {
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+#panel-header h1 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Navigation styles */
+#panel-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+#panel-logout {
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+#panel-logout:hover {
+  background-color: var(--button-hover);
+}
+
+/* Content section */
+#panel-content {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  #panel-header {
+    padding: 0.75rem;
+  }
+
+  #panel-header h1 {
+    font-size: 1.25rem;
+  }
+
+  #panel-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #panel-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  #panel-nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #panel-logout {
+    width: 100%;
+    max-width: 200px;
+  }
+}

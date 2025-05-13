@@ -15,13 +15,13 @@ func FrontendRouter(router *chi.Mux) {
 	frontendRouter := chi.NewRouter()
 
 	frontendRouter.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-		render(writer, request, "pages/index.html", map[string]any{
+		render(writer, request, "pages/panel/index.html", map[string]any{
 			"Title": "Bloggo - Blog With Go",
 		})
 	})
 
 	frontendRouter.Get("/auth/login", func(writer http.ResponseWriter, request *http.Request) {
-		render(writer, request, "pages/login/index.html", map[string]any{
+		render(writer, request, "pages/auth/login/index.html", map[string]any{
 			"Title": "Bloggo - Login",
 		})
 	})
@@ -39,11 +39,24 @@ func render(
 	templateName string,
 	data any,
 ) {
-	middleware.Handle(func(writer http.ResponseWriter, request *http.Request) *utils.AppError {
-		// Parse both templates at once
+	middleware.Handle(func(
+		writer http.ResponseWriter,
+		request *http.Request,
+	) *utils.AppError {
+		// Get the base template path
+		baseTemplate := filepath.Join("templates", "base", "index.html")
+
+		// Get the layout template path based on the template name
+		layoutPath := filepath.Join("templates", "layouts", "panel", "index.html")
+
+		// Get the page template path
+		pageTemplate := filepath.Join("templates", templateName)
+
+		// Parse all templates
 		templates := []string{
-			filepath.Join("templates", "base", "index.html"),
-			filepath.Join("templates", templateName),
+			baseTemplate,
+			layoutPath,
+			pageTemplate,
 		}
 
 		log.Printf("Loading templates: %v", templates)
@@ -57,8 +70,8 @@ func render(
 		// Set content type header
 		writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-		// Execute the base template
-		err = tmpl.ExecuteTemplate(writer, "base/index", data)
+		// Execute the template
+		err = tmpl.ExecuteTemplate(writer, "base", data)
 		if err != nil {
 			log.Printf("Error executing template: %v", err)
 			return utils.ErrInternalServer

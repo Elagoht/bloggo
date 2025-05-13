@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Elagoht/bloggo/services"
 	"github.com/Elagoht/bloggo/utils"
@@ -34,6 +35,7 @@ func (controller *AuthController) Login(
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour), // 1 hour validity
 		SameSite: http.SameSiteLaxMode,
 	})
 	http.Redirect(writer, request, "/", http.StatusSeeOther)
