@@ -44,13 +44,13 @@ func render(
 		request *http.Request,
 	) *utils.AppError {
 		// Get the base template path
-		baseTemplate := filepath.Join("templates", "base", "index.html")
+		baseTemplate := filepath.Join("frontend", "templates", "base", "index.html")
 
 		// Get the layout template path based on the template name
-		layoutPath := filepath.Join("templates", "layouts", "panel", "index.html")
+		layoutPath := filepath.Join("frontend", "templates", "layouts", "panel", "index.html")
 
 		// Get the page template path
-		pageTemplate := filepath.Join("templates", templateName)
+		pageTemplate := filepath.Join("frontend", "templates", templateName)
 
 		// Parse all templates
 		templates := []string{
