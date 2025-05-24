@@ -1,10 +1,6 @@
-{{ template "base" . }}
-
-{{ define "css" }}
-<link rel="stylesheet" href="/statics/design/auth.css">
-{{ end }}
-
-{{ define "content" }}
+{{ template "base" . }} {{ define "css" }}
+<link rel="stylesheet" href="/static/design/auth.css" />
+{{ end }} {{ define "content" }}
 <main id="auth" class="auth-container">
   <form action="/api/auth/login" method="post" class="auth-form">
     <hgroup>
@@ -23,7 +19,7 @@
         placeholder="Enter your username"
         required
         autocomplete="username"
-      >
+      />
     </div>
 
     <div class="form-group">
@@ -36,17 +32,19 @@
         placeholder="Enter your passphrase"
         required
         autocomplete="current-passphrase"
-      >
+      />
     </div>
 
     <div class="form-options">
       <label class="remember-me">
-        <input type="checkbox" name="remember" id="remember">
+        <input type="checkbox" name="remember" id="remember" />
 
         <span>Remember me</span>
       </label>
 
-      <a href="/forgot-passphrase" class="forgot-passphrase">Forgot passphrase?</a>
+      <a href="/forgot-passphrase" class="forgot-passphrase"
+        >Forgot passphrase?</a
+      >
     </div>
 
     <button type="submit" class="auth-button">Sign In</button>

@@ -1,0 +1,29 @@
+{{ template "base" . }} {{ define "css" }}
+<link rel="stylesheet" href="/static/design/panel.css" />
+{{ end }} {{ define "content" }}
+<main id="panel">
+  <header id="panel-header">
+    <hgroup class="panel-header-logo">
+      <img
+        src="/static/assets/bloggo.webp"
+        alt="Bloggo"
+        id="panel-logo"
+        width="48"
+        height="48"
+      />
+      <h1>Bloggo</h1>
+    </hgroup>
+
+    <nav id="panel-nav">
+      <button
+        id="panel-logout"
+        onclick="document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; window.location.href = '/auth/login';"
+      >
+        Logout
+      </button>
+    </nav>
+  </header>
+
+  <section id="panel-content">{{ template "panel" . }}</section>
+</main>
+{{ end }}

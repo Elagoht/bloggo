@@ -1,8 +1,8 @@
 package modules
 
 import (
-	"github.com/Elagoht/bloggo/controllers"
-	"github.com/Elagoht/bloggo/middleware"
+	"github.com/Elagoht/bloggo/backend/controllers"
+	"github.com/Elagoht/bloggo/backend/middleware"
 	"github.com/go-chi/chi"
 )
 

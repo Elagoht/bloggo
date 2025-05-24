@@ -17,9 +17,9 @@ var (
 		"/auth/login",
 		"/api/auth",
 	}
-	staticsRoute = "/statics"
-	loginRoute   = "/auth/login"
-	mainRoute    = "/"
+	staticRoute = "/static"
+	loginRoute  = "/auth/login"
+	mainRoute   = "/"
 )
 
 func init() {
@@ -35,7 +35,7 @@ func AuthorizationGuard(next http.Handler) http.Handler {
 		request *http.Request,
 	) {
 		// Static files does not require authorization
-		if strings.HasPrefix(request.URL.Path, staticsRoute) {
+		if strings.HasPrefix(request.URL.Path, staticRoute) {
 			next.ServeHTTP(writer, request)
 			return
 		}

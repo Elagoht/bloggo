@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Elagoht/bloggo/services"
+	"github.com/Elagoht/bloggo/backend/services"
 	"github.com/Elagoht/bloggo/utils"
 )
 

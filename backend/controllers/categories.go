@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Elagoht/bloggo/models"
-	"github.com/Elagoht/bloggo/services"
+	"github.com/Elagoht/bloggo/backend/models"
+	"github.com/Elagoht/bloggo/backend/services"
 	"github.com/Elagoht/bloggo/utils"
 	"github.com/go-chi/chi"
 )

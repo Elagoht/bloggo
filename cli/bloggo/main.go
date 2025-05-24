@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Elagoht/bloggo/backend/guards"
+	"github.com/Elagoht/bloggo/backend/middleware"
+	"github.com/Elagoht/bloggo/backend/modules"
 	"github.com/Elagoht/bloggo/frontend"
-	"github.com/Elagoht/bloggo/guards"
-	"github.com/Elagoht/bloggo/middleware"
-	"github.com/Elagoht/bloggo/modules"
 	"github.com/Elagoht/bloggo/utils"
 
 	"github.com/go-chi/chi"

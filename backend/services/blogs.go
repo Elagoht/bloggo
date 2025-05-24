@@ -3,9 +3,9 @@ package services
 import (
 	"net/http"
 
-	"github.com/Elagoht/bloggo/models"
-	"github.com/Elagoht/bloggo/pipes"
-	"github.com/Elagoht/bloggo/repositories"
+	"github.com/Elagoht/bloggo/backend/models"
+	"github.com/Elagoht/bloggo/backend/pipes"
+	"github.com/Elagoht/bloggo/backend/repositories"
 	"github.com/Elagoht/bloggo/utils"
 	"github.com/go-playground/validator/v10"
 )

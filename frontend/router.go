@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/Elagoht/bloggo/middleware"
+	"github.com/Elagoht/bloggo/backend/middleware"
 	"github.com/Elagoht/bloggo/utils"
 	"github.com/go-chi/chi"
 )
@@ -27,8 +27,8 @@ func FrontendRouter(router *chi.Mux) {
 	})
 
 	// Serve static files last
-	fileServer := http.FileServer(http.Dir("statics"))
-	frontendRouter.Handle("/*", http.StripPrefix("/statics", fileServer))
+	fileServer := http.FileServer(http.Dir("static"))
+	frontendRouter.Handle("/*", http.StripPrefix("/static", fileServer))
 
 	router.Mount("/", frontendRouter)
 }

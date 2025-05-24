@@ -3,7 +3,7 @@ package repositories
 import (
 	"database/sql"
 
-	"github.com/Elagoht/bloggo/models"
+	"github.com/Elagoht/bloggo/backend/models"
 	"github.com/Elagoht/bloggo/utils"
 )
 
