@@ -1,57 +1,28 @@
-{{ template "base" . }} {{ define "css" }}
+{{ template "base" . }} {{ define "css-extra" }}
 <link rel="stylesheet" href="/static/design/auth.css" />
 {{ end }} {{ define "content" }}
-<main id="auth" class="auth-container">
-  <form action="/api/auth/login" method="post" class="auth-form">
+<body>
+  <main>
     <hgroup>
-      <h1 class="auth-title">Welcome Back</h1>
+      <img
+        src="/static/assets/bloggo.webp"
+        width="128"
+        height="128"
+        alt="Bloggo Logo"
+      />
 
-      <p class="auth-subtitle">Please sign in to continue</p>
+      <h1>Bloggo</h1>
+
+      <strong>Your Own Blog CMS</strong>
     </hgroup>
 
-    <div class="form-group">
-      <label for="username">Username</label>
+    <form action="/api/auth/login" method="post" class="auth-form">
+      <input type="email" placeholder="Email" />
 
-      <input
-        type="text"
-        id="username"
-        name="username"
-        placeholder="Enter your username"
-        required
-        autocomplete="username"
-      />
-    </div>
+      <input type="password" placeholder="Password" />
 
-    <div class="form-group">
-      <label for="passphrase">Passphrase</label>
-
-      <input
-        type="password"
-        id="passphrase"
-        name="passphrase"
-        placeholder="Enter your passphrase"
-        required
-        autocomplete="current-passphrase"
-      />
-    </div>
-
-    <div class="form-options">
-      <label class="remember-me">
-        <input type="checkbox" name="remember" id="remember" />
-
-        <span>Remember me</span>
-      </label>
-
-      <a href="/forgot-passphrase" class="forgot-passphrase"
-        >Forgot passphrase?</a
-      >
-    </div>
-
-    <button type="submit" class="auth-button">Sign In</button>
-
-    <p class="auth-footer">
-      Don't have an account? <a href="/register">Sign up</a>
-    </p>
-  </form>
-</main>
+      <button type="submit">Login</button>
+    </form>
+  </main>
+</body>
 {{ end }}
