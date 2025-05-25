@@ -1,0 +1,35 @@
+section.total-counters {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+section.horizontal-bar-charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+section.pie-charts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+section.pie-charts > * {
+  flex: 1;
+}
+
+@media (max-width: 1024px) {
+  section.total-counters {
+    grid-template-columns: 1fr;
+  }
+
+  section.horizontal-bar-charts {
+    grid-template-columns: 1fr;
+  }
+
+  section.vertical-bar-chart {
+    grid-template-columns: 1fr;
+  }
+}

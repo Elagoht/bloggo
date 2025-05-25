@@ -1,5 +1,66 @@
-{{ template "layouts/panel/index" . }}
+{{ template "layouts/panel/index" . }} {{ define "css-extra" }}
+<link rel="stylesheet" href="/static/design/dashboard.css" />
+{{ end }} {{ define "components-extra" }}
+<script src="/static/components/counter-chart.js" type="module"></script>
+<script src="/static/components/vertical-bar-chart.js" type="module"></script>
+<script src="/static/components/horizontal-bar-chart.js" type="module"></script>
+<script src="/static/components/pie-chart.js" type="module"></script>
+{{ end }} {{ define "panel-content" }}
+<section>
+  <counter-chart
+    data='[{"label": "Views This Day", "value": 64 }, {"label": "Views This Week", "value": 464 }, {"label": "Views This Month", "value": 2664 }, {"label": "Views This Year", "value": 12664 }]'
+  ></counter-chart>
+</section>
 
-{{ define "panel" }}
-<h1>Hello, World!</h1>
+<section>
+  <vertical-bar-chart
+    title="Today's Views"
+    data="[5,1,3,2,4,6,8,13,11,3,9,6,10,2,4,6,10,13,22,10,1,8,3,4]"
+  ></vertical-bar-chart>
+</section>
+
+<section class="pie-charts">
+  <pie-chart
+    title="Categories-Blog Distribution"
+    data='[{"label": "Technology", "value": 87},{"label": "Science", "value": 13},{"label": "Health", "value": 7}]'
+  ></pie-chart>
+
+  <pie-chart
+    title="Categories-Read Time Distribution"
+    data='[{"label": "Technology", "value": 7},{"label": "Science", "value": 13},{"label": "Health", "value": 4}]'
+  ></pie-chart>
+
+  <pie-chart
+    title="Categories-Views Distribution"
+    data='[{"label": "Technology", "value": 3213},{"label": "Science", "value": 1123},{"label": "Health", "value": 712}]'
+  ></pie-chart>
+</section>
+
+<section class="horizontal-bar-charts">
+  <horizontal-bar-chart
+    title="Most Viewed Blogs"
+    data='[{"label": "Lorem ipsum dolor sit amet", "value": 554 }, {"label": "Consectetur adipiscing elit", "value": 460 }, {"label": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua", "value": 321 }, {"label": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "value": 286 }, {"label": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur", "value": 134 }]'
+  ></horizontal-bar-chart>
+
+  <horizontal-bar-chart
+    title="Longest Blogs"
+    data='[{"label": "Lorem ipsum dolor sit amet", "value": 12, "unit": "mins" }, {"label": "Consectetur adipiscing elit", "value": 10, "unit": "mins" }, {"label": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua", "value": 8, "unit": "mins" }, {"label": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "value": 7, "unit": "mins" }, {"label": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur", "value": 6, "unit": "mins" }]'
+  ></horizontal-bar-chart>
+</section>
+
+<section class="total-counters">
+  <counter-chart
+    data='[{"label": "Total Published Blogs", "value": 87 }, {"label": "Total Drafted Blogs", "value": 3 }]'
+  ></counter-chart>
+
+  <counter-chart
+    data='[{"label": "Total Read Time", "value": "554 mins" }, {"label": "Total Views", "value": 18929 }]'
+  ></counter-chart>
+</section>
+
+<section class="average-metrics">
+  <counter-chart
+    data='[{"label": "Average Read Time", "value": "10 mins" }, {"label": "Average Views", "value": 10 }]'
+  ></counter-chart>
+</section>
 {{ end }}

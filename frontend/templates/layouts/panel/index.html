@@ -1,29 +1,61 @@
 {{ template "base" . }} {{ define "css" }}
 <link rel="stylesheet" href="/static/design/panel.css" />
-{{ end }} {{ define "content" }}
-<main id="panel">
-  <header id="panel-header">
-    <hgroup class="panel-header-logo">
-      <img
-        src="/static/assets/bloggo.webp"
-        alt="Bloggo"
-        id="panel-logo"
-        width="48"
-        height="48"
-      />
-      <h1>Bloggo</h1>
+<link rel="stylesheet" href="/static/design/form.css" />
+{{ block "css-extra" . }} {{ end }} {{ end }} {{ define "behavior" }}
+<script src="/static/behaviour/aside.js" defer></script>
+{{ block "behavior-extra" . }} {{ end }} {{ end }} {{ define "components" }}
+<script src="/static/components/icons.js"></script>
+{{ block "components-extra" . }} {{ end }} {{ end }} {{ define "content" }}
+<body class="aside-open">
+  <header>
+    <button type="button"><icon-menu></icon-menu></button>
+
+    <hgroup>
+      <a href="/dashboard">
+        <img
+          src="/static/assets/bloggo.webp"
+          width="48"
+          height="48"
+          alt="Bloggo Logo"
+        />
+
+        <h1>Bloggo</h1>
+      </a>
     </hgroup>
 
-    <nav id="panel-nav">
-      <button
-        id="panel-logout"
-        onclick="document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; window.location.href = '/auth/login';"
-      >
-        Logout
-      </button>
-    </nav>
+    <form action="/api/search" method="GET">
+      <input type="search" placeholder="Search Blogs" />
+
+      <button type="submit"><icon-search></icon-search></button>
+    </form>
+
+    <form action="/api/auth/logout" method="POST">
+      <button type="submit"><icon-logout></icon-logout></button>
+    </form>
   </header>
 
-  <section id="panel-content">{{ template "panel" . }}</section>
-</main>
+  <aside>
+    <nav>
+      <a href="/dashboard"> <icon-dashboard></icon-dashboard> Dashboard </a>
+      <a href="/write"><icon-write></icon-write> Write</a>
+      <a href="/blogs"><icon-blog></icon-blog> Blogs</a>
+      <a href="/categories"> <icon-category></icon-category> Categories </a>
+      <a href="/api"><icon-api></icon-api> API Model</a>
+      <a href="/webhooks"><icon-webhook></icon-webhook> Webhooks</a>
+    </nav>
+  </aside>
+
+  <main>
+    {{ block "panel-content" . }} {{ end }}
+
+    <footer>
+      <p>
+        Made with
+        <a target="_blank" href="https://wikipedia.org/wiki/love">🩷</a> and
+        <a target="_blank" href="https://go.dev">Go</a>
+        by <a target="_blank" href="https://github.com/Elagoht">Elagoht</a>
+      </p>
+    </footer>
+  </main>
+</body>
 {{ end }}
