@@ -16,6 +16,7 @@ Pre-built binaries are available on the [Releases](https://github.com/Elagoht/bl
 ### Quick Install
 
 **Linux AMD64:**
+
 ```bash
 wget https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-linux-amd64.tar.gz
 tar -xzf bloggo-linux-amd64.tar.gz
@@ -24,6 +25,7 @@ chmod +x bloggo-linux-amd64
 ```
 
 **Linux ARM64:**
+
 ```bash
 wget https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-linux-arm64.tar.gz
 tar -xzf bloggo-linux-arm64.tar.gz
@@ -34,6 +36,7 @@ chmod +x bloggo-linux-arm64
 ### Verify Download
 
 Download the checksums file and verify your binary:
+
 ```bash
 wget https://github.com/Elagoht/bloggo/releases/latest/download/checksums.txt
 sha256sum -c checksums.txt
@@ -50,22 +53,26 @@ sha256sum -c checksums.txt
 ### Local Development
 
 1. Clone the frontend and backend repositories:
+
 ```bash
 git clone https://github.com/Elagoht/bloggo-frontend frontend
 git clone https://github.com/Elagoht/bloggo-backend backend
 ```
 
 2. Install frontend dependencies:
+
 ```bash
 cd frontend && npm install && cd ..
 ```
 
 3. Run frontend in development mode:
+
 ```bash
 make dev-frontend
 ```
 
 4. Run backend in development mode (in another terminal):
+
 ```bash
 make dev-backend
 ```
@@ -73,31 +80,37 @@ make dev-backend
 ### Building
 
 Build for your current platform:
+
 ```bash
 make build
 ```
 
 Build for Linux AMD64:
+
 ```bash
 make build-linux-amd64
 ```
 
 Build for Linux ARM64:
+
 ```bash
 make build-linux-arm64
 ```
 
 Build all Linux targets:
+
 ```bash
 make build-all-linux
 ```
 
 Clean build artifacts:
+
 ```bash
 make clean
 ```
 
 View all available commands:
+
 ```bash
 make help
 ```
@@ -107,6 +120,7 @@ make help
 Releases are automated via GitHub Actions. To create a new release:
 
 1. Tag your commit with a semantic version:
+
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
@@ -163,12 +177,14 @@ External repositories:
 ## 📝 License
 
 See the individual repositories for license information:
+
 - [Frontend License](https://github.com/Elagoht/bloggo-frontend/blob/main/LICENSE)
 - [Backend License](https://github.com/Elagoht/bloggo-backend/blob/main/LICENSE)
 
 ## 🤝 Contributing
 
 Contributions should be made to the respective repositories:
+
 - Frontend issues/PRs → [bloggo-frontend](https://github.com/Elagoht/bloggo-frontend)
 - Backend issues/PRs → [bloggo-backend](https://github.com/Elagoht/bloggo-backend)
 - Build/Release issues → This repository
