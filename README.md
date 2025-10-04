@@ -51,15 +51,6 @@ chmod +x bloggo-darwin-arm64
 ./bloggo-darwin-arm64
 ```
 
-**Windows AMD64:**
-
-```powershell
-Invoke-WebRequest -Uri https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-windows-amd64.exe.zip -OutFile bloggo-windows-amd64.exe.zip
-Expand-Archive bloggo-windows-amd64.exe.zip
-cd bloggo-windows-amd64.exe
-.\bloggo-windows-amd64.exe
-```
-
 ### Verify Download
 
 Download the checksums file and verify your binary:
@@ -128,7 +119,6 @@ Releases are automated via GitHub Actions. When you push a tag, binaries are bui
 
 - **Linux**: AMD64, ARM64
 - **macOS**: AMD64 (Intel), ARM64 (Apple Silicon)
-- **Windows**: AMD64
 
 To create a new release:
 
@@ -216,7 +206,6 @@ After extracting the release archive:
 1. Create a `.env` file with your configuration (copy from `.env.example`)
 2. Run the binary:
    - **Linux/macOS**: `./bloggo-linux-amd64` (or your platform's binary)
-   - **Windows**: `.\bloggo-windows-amd64.exe`
 3. The application will create:
    - `bloggo.sqlite` - Database file (on first run)
    - `uploads/` - File storage directory (automatically)

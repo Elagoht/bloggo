@@ -36,12 +36,6 @@ jobs:
             goarch: arm64
             artifact_name: bloggo-darwin-arm64
             cgo_enabled: 1
-          # Windows builds
-          - os: windows-latest
-            goos: windows
-            goarch: amd64
-            artifact_name: bloggo-windows-amd64.exe
-            cgo_enabled: 1
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout build repository
@@ -78,21 +72,12 @@ jobs:
         run: cd frontend && npm ci
       - name: Build frontend
         run: cd frontend && npm run build
-      - name: Embed frontend into backend (Unix)
-        if: runner.os != 'Windows'
+      - name: Embed frontend into backend
         run: |
           rm -rf backend/internal/embed/dist
           mkdir -p backend/internal/embed
           cp -r frontend/dist backend/internal/embed/
-      - name: Embed frontend into backend (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          if (Test-Path backend/internal/embed/dist) { Remove-Item -Recurse -Force backend/internal/embed/dist }
-          New-Item -ItemType Directory -Force -Path backend/internal/embed
-          Copy-Item -Recurse frontend/dist backend/internal/embed/
-        shell: pwsh
-      - name: Build binary (Unix)
-        if: runner.os != 'Windows'
+      - name: Build binary
         env:
           CGO_ENABLED: ${{ matrix.cgo_enabled }}
           CC: ${{ matrix.cc }}
@@ -100,29 +85,11 @@ jobs:
           cd backend
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-s -w" -o ${{ matrix.artifact_name }} cli/main.go
           tar -czf ${{ matrix.artifact_name }}.tar.gz ${{ matrix.artifact_name }} .env.example
-      - name: Build binary (Windows)
-        if: runner.os == 'Windows'
-        env:
-          CGO_ENABLED: ${{ matrix.cgo_enabled }}
-        run: |
-          cd backend
-          $env:GOOS="${{ matrix.goos }}"
-          $env:GOARCH="${{ matrix.goarch }}"
-          go build -ldflags="-s -w" -o ${{ matrix.artifact_name }} cli/main.go
-          Compress-Archive -Path ${{ matrix.artifact_name }},.env.example -DestinationPath ${{ matrix.artifact_name }}.zip
-        shell: pwsh
-      - name: Upload artifact (Unix)
-        if: runner.os != 'Windows'
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: backend/${{ matrix.artifact_name }}.tar.gz
-      - name: Upload artifact (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact_name }}
-          path: backend/${{ matrix.artifact_name }}.zip
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -158,7 +125,6 @@ jobs:
             artifacts/bloggo-linux-arm64/bloggo-linux-arm64.tar.gz
             artifacts/bloggo-darwin-amd64/bloggo-darwin-amd64.tar.gz
             artifacts/bloggo-darwin-arm64/bloggo-darwin-arm64.tar.gz
-            artifacts/bloggo-windows-amd64.exe/bloggo-windows-amd64.exe.zip
             checksums.txt
           prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
           generate_release_notes: true
@@ -197,12 +163,4 @@ jobs:
             tar -xzf bloggo-darwin-arm64.tar.gz
             chmod +x bloggo-darwin-arm64
             ./bloggo-darwin-arm64
-            ```
-
-            **Windows AMD64:**
-            ```powershell
-            Invoke-WebRequest -Uri https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-windows-amd64.exe.zip -OutFile bloggo-windows-amd64.exe.zip
-            Expand-Archive bloggo-windows-amd64.exe.zip
-            cd bloggo-windows-amd64.exe
-            .\bloggo-windows-amd64.exe
             ```
