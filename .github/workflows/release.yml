@@ -1,5 +1,4 @@
 name: Release
-
 on:
   push:
     tags:
@@ -7,75 +6,66 @@ on:
       - 'v*.*.*-rc*'
       - 'v*.*.*-beta*'
       - 'v*.*.*-alpha*'
-
 permissions:
   contents: write
-
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout build repository
         uses: actions/checkout@v4
         with:
           path: build-repo
-
       - name: Checkout frontend repository
         uses: actions/checkout@v4
         with:
           repository: Elagoht/bloggo-frontend
           path: frontend
-
       - name: Checkout backend repository
         uses: actions/checkout@v4
         with:
           repository: Elagoht/bloggo-backend
           path: backend
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.23'
           cache-dependency-path: backend/go.sum
-
       - name: Install frontend dependencies
         run: cd frontend && npm ci
-
       - name: Build frontend
         run: cd frontend && npm run build
-
       - name: Embed frontend into backend
         run: |
           rm -rf backend/internal/embed/dist
           mkdir -p backend/internal/embed
           cp -r frontend/dist backend/internal/embed/
-
       - name: Build for Linux AMD64
         run: |
           cd backend
           GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o bloggo-linux-amd64 cli/main.go
           tar -czf bloggo-linux-amd64.tar.gz bloggo-linux-amd64 .env.example
-
+      - name: Install ARM64 cross-compilation tools
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo apt update
+          sudo apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libwebp-dev:arm64 libsqlite3-dev:arm64
       - name: Build for Linux ARM64
         run: |
           cd backend
-          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o bloggo-linux-arm64 cli/main.go
+          CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=aarch64-linux-gnu-gcc go build -ldflags="-s -w" -o bloggo-linux-arm64 cli/main.go
           tar -czf bloggo-linux-arm64.tar.gz bloggo-linux-arm64 .env.example
-
       - name: Generate checksums
         run: |
           cd backend
           sha256sum bloggo-linux-amd64.tar.gz > checksums.txt
           sha256sum bloggo-linux-arm64.tar.gz >> checksums.txt
-
       - name: Determine if pre-release
         id: prerelease
         run: |
@@ -84,7 +74,6 @@ jobs:
           else
             echo "is_prerelease=false" >> $GITHUB_OUTPUT
           fi
-
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -96,32 +85,11 @@ jobs:
           generate_release_notes: true
           body: |
             ## Bloggo ${{ github.ref_name }}
-
             ### Installation
-
             Download the appropriate binary for your system:
-
             **Linux AMD64:**
             ```bash
             wget https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-linux-amd64.tar.gz
             tar -xzf bloggo-linux-amd64.tar.gz
             chmod +x bloggo-linux-amd64
             ./bloggo-linux-amd64
-            ```
-
-            **Linux ARM64:**
-            ```bash
-            wget https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-linux-arm64.tar.gz
-            tar -xzf bloggo-linux-arm64.tar.gz
-            chmod +x bloggo-linux-arm64
-            ./bloggo-linux-arm64
-            ```
-
-            ### Verify Download
-            ```bash
-            sha256sum -c checksums.txt
-            ```
-
-            ---
-
-            **Full Changelog**: https://github.com/Elagoht/bloggo/compare/${{ github.event.before }}...${{ github.ref_name }}
