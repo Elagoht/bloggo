@@ -1,0 +1,7 @@
+# Build output
+bloggo/
+build/
+
+# External repos (cloned during build)
+frontend/
+backend/
