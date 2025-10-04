@@ -33,6 +33,33 @@ chmod +x bloggo-linux-arm64
 ./bloggo-linux-arm64
 ```
 
+**macOS AMD64 (Intel):**
+
+```bash
+wget https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-darwin-amd64.tar.gz
+tar -xzf bloggo-darwin-amd64.tar.gz
+chmod +x bloggo-darwin-amd64
+./bloggo-darwin-amd64
+```
+
+**macOS ARM64 (Apple Silicon):**
+
+```bash
+wget https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-darwin-arm64.tar.gz
+tar -xzf bloggo-darwin-arm64.tar.gz
+chmod +x bloggo-darwin-arm64
+./bloggo-darwin-arm64
+```
+
+**Windows AMD64:**
+
+```powershell
+Invoke-WebRequest -Uri https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-windows-amd64.exe.zip -OutFile bloggo-windows-amd64.exe.zip
+Expand-Archive bloggo-windows-amd64.exe.zip
+cd bloggo-windows-amd64.exe
+.\bloggo-windows-amd64.exe
+```
+
 ### Verify Download
 
 Download the checksums file and verify your binary:
@@ -59,22 +86,19 @@ git clone https://github.com/Elagoht/bloggo-frontend frontend
 git clone https://github.com/Elagoht/bloggo-backend backend
 ```
 
-2. Install frontend dependencies:
+2. Run frontend in development mode:
 
 ```bash
-cd frontend && npm install && cd ..
+cd frontend
+npm install
+npm run dev
 ```
 
-3. Run frontend in development mode:
+3. Run backend in development mode (in another terminal):
 
 ```bash
-make dev-frontend
-```
-
-4. Run backend in development mode (in another terminal):
-
-```bash
-make dev-backend
+cd backend
+go run cli/main.go
 ```
 
 ### Building
@@ -85,23 +109,12 @@ Build for your current platform:
 make build
 ```
 
-Build for Linux AMD64:
+This will:
 
-```bash
-make build-linux-amd64
-```
-
-Build for Linux ARM64:
-
-```bash
-make build-linux-arm64
-```
-
-Build all Linux targets:
-
-```bash
-make build-all-linux
-```
+1. Install frontend dependencies
+2. Build the frontend
+3. Embed the frontend into the backend
+4. Build the Go binary for your current platform
 
 Clean build artifacts:
 
@@ -109,15 +122,15 @@ Clean build artifacts:
 make clean
 ```
 
-View all available commands:
-
-```bash
-make help
-```
-
 ## 🚀 Release Process
 
-Releases are automated via GitHub Actions. To create a new release:
+Releases are automated via GitHub Actions. When you push a tag, binaries are built for:
+
+- **Linux**: AMD64, ARM64
+- **macOS**: AMD64 (Intel), ARM64 (Apple Silicon)
+- **Windows**: AMD64
+
+To create a new release:
 
 1. Tag your commit with a semantic version:
 
@@ -198,10 +211,12 @@ Contributions should be made to the respective repositories:
 
 ## 📦 Deployment
 
-After extracting the release tarball:
+After extracting the release archive:
 
 1. Create a `.env` file with your configuration (copy from `.env.example`)
-2. Run the binary: `./bloggo-linux-amd64` or `./bloggo-linux-arm64`
+2. Run the binary:
+   - **Linux/macOS**: `./bloggo-linux-amd64` (or your platform's binary)
+   - **Windows**: `.\bloggo-windows-amd64.exe`
 3. The application will create:
    - `bloggo.sqlite` - Database file (on first run)
    - `uploads/` - File storage directory (automatically)
