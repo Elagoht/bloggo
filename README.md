@@ -1,6 +1,18 @@
+<div align="center">
+  <img src="./bloggo.webp" width="196" heigth="196" />
+
 # Bloggo
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Elagoht/bloggo/release.yml?style=for-the-badge)
+[![Go Version](https://img.shields.io/badge/Go-1.23+-00ADD8?style=for-the-badge&logo=go)](https://go.dev/)
+[![Node Version](https://img.shields.io/badge/Node-20+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+![GitHub License](https://img.shields.io/github/license/Elagoht/bloggo?style=for-the-badge)
+[![Platform](https://img.shields.io/badge/Linux-black?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/Elagoht/bloggo/releases)
+[![Platform](https://img.shields.io/badge/Macos-black?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/Elagoht/bloggo/releases)
+
 A modern, full-stack blog platform with embedded frontend and backend in a single binary.
+
+</div>
 
 ## 🏗️ Architecture
 
