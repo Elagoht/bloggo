@@ -18,28 +18,30 @@ jobs:
             goos: linux
             goarch: amd64
             artifact_name: bloggo-linux-amd64
+            cgo_enabled: 1
           - os: ubuntu-latest
             goos: linux
             goarch: arm64
             artifact_name: bloggo-linux-arm64
+            cgo_enabled: 1
+            cc: aarch64-linux-gnu-gcc
           # macOS builds
           - os: macos-13
             goos: darwin
             goarch: amd64
             artifact_name: bloggo-darwin-amd64
+            cgo_enabled: 1
           - os: macos-14
             goos: darwin
             goarch: arm64
             artifact_name: bloggo-darwin-arm64
+            cgo_enabled: 1
           # Windows builds
           - os: windows-latest
             goos: windows
             goarch: amd64
             artifact_name: bloggo-windows-amd64.exe
-          - os: windows-latest
-            goos: windows
-            goarch: arm64
-            artifact_name: bloggo-windows-arm64.exe
+            cgo_enabled: 1
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout build repository
@@ -56,6 +58,11 @@ jobs:
         with:
           repository: Elagoht/bloggo-backend
           path: backend
+      - name: Install cross-compilation tools (Linux ARM64)
+        if: matrix.goos == 'linux' && matrix.goarch == 'arm64'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -86,12 +93,17 @@ jobs:
         shell: pwsh
       - name: Build binary (Unix)
         if: runner.os != 'Windows'
+        env:
+          CGO_ENABLED: ${{ matrix.cgo_enabled }}
+          CC: ${{ matrix.cc }}
         run: |
           cd backend
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-s -w" -o ${{ matrix.artifact_name }} cli/main.go
           tar -czf ${{ matrix.artifact_name }}.tar.gz ${{ matrix.artifact_name }} .env.example
       - name: Build binary (Windows)
         if: runner.os == 'Windows'
+        env:
+          CGO_ENABLED: ${{ matrix.cgo_enabled }}
         run: |
           cd backend
           $env:GOOS="${{ matrix.goos }}"
@@ -147,7 +159,6 @@ jobs:
             artifacts/bloggo-darwin-amd64/bloggo-darwin-amd64.tar.gz
             artifacts/bloggo-darwin-arm64/bloggo-darwin-arm64.tar.gz
             artifacts/bloggo-windows-amd64.exe/bloggo-windows-amd64.exe.zip
-            artifacts/bloggo-windows-arm64.exe/bloggo-windows-arm64.exe.zip
             checksums.txt
           prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
           generate_release_notes: true
@@ -194,12 +205,4 @@ jobs:
             Expand-Archive bloggo-windows-amd64.exe.zip
             cd bloggo-windows-amd64.exe
             .\bloggo-windows-amd64.exe
-            ```
-
-            **Windows ARM64:**
-            ```powershell
-            Invoke-WebRequest -Uri https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-windows-arm64.exe.zip -OutFile bloggo-windows-arm64.exe.zip
-            Expand-Archive bloggo-windows-arm64.exe.zip
-            cd bloggo-windows-arm64.exe
-            .\bloggo-windows-arm64.exe
             ```
