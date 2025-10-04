@@ -20,6 +20,8 @@ build:
 
 # Build frontend
 build-frontend:
+	@echo "📦 Installing frontend dependencies..."
+	@cd $(FRONTEND_DIR) && npm ci
 	@echo "📦 Building frontend..."
 	@cd $(FRONTEND_DIR) && npm run build
 
