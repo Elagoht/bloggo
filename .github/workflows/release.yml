@@ -2,18 +2,45 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.*'
-      - 'v*.*.*-rc*'
-      - 'v*.*.*-beta*'
-      - 'v*.*.*-alpha*'
+      - "v*.*.*"
+      - "v*.*.*-rc*"
+      - "v*.*.*-beta*"
+      - "v*.*.*-alpha*"
 permissions:
   contents: write
 jobs:
   build:
     strategy:
       matrix:
-        arch: [amd64, arm64]
-    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-latest' || 'ubuntu-latest' }}
+        include:
+          # Linux builds
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            artifact_name: bloggo-linux-amd64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: arm64
+            artifact_name: bloggo-linux-arm64
+          # macOS builds
+          - os: macos-13
+            goos: darwin
+            goarch: amd64
+            artifact_name: bloggo-darwin-amd64
+          - os: macos-14
+            goos: darwin
+            goarch: arm64
+            artifact_name: bloggo-darwin-arm64
+          # Windows builds
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            artifact_name: bloggo-windows-amd64.exe
+          - os: windows-latest
+            goos: windows
+            goarch: arm64
+            artifact_name: bloggo-windows-arm64.exe
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout build repository
         uses: actions/checkout@v4
@@ -32,33 +59,58 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.23'
+          go-version: "1.23"
           cache-dependency-path: backend/go.sum
       - name: Install frontend dependencies
         run: cd frontend && npm ci
       - name: Build frontend
         run: cd frontend && npm run build
-      - name: Embed frontend into backend
+      - name: Embed frontend into backend (Unix)
+        if: runner.os != 'Windows'
         run: |
           rm -rf backend/internal/embed/dist
           mkdir -p backend/internal/embed
           cp -r frontend/dist backend/internal/embed/
-      - name: Build binary
+      - name: Embed frontend into backend (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          if (Test-Path backend/internal/embed/dist) { Remove-Item -Recurse -Force backend/internal/embed/dist }
+          New-Item -ItemType Directory -Force -Path backend/internal/embed
+          Copy-Item -Recurse frontend/dist backend/internal/embed/
+        shell: pwsh
+      - name: Build binary (Unix)
+        if: runner.os != 'Windows'
         run: |
           cd backend
-          GOOS=linux GOARCH=${{ matrix.arch }} go build -ldflags="-s -w" -o bloggo-linux-${{ matrix.arch }} cli/main.go
-          tar -czf bloggo-linux-${{ matrix.arch }}.tar.gz bloggo-linux-${{ matrix.arch }} .env.example
-      - name: Upload artifact
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-s -w" -o ${{ matrix.artifact_name }} cli/main.go
+          tar -czf ${{ matrix.artifact_name }}.tar.gz ${{ matrix.artifact_name }} .env.example
+      - name: Build binary (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd backend
+          $env:GOOS="${{ matrix.goos }}"
+          $env:GOARCH="${{ matrix.goarch }}"
+          go build -ldflags="-s -w" -o ${{ matrix.artifact_name }} cli/main.go
+          Compress-Archive -Path ${{ matrix.artifact_name }},.env.example -DestinationPath ${{ matrix.artifact_name }}.zip
+        shell: pwsh
+      - name: Upload artifact (Unix)
+        if: runner.os != 'Windows'
         uses: actions/upload-artifact@v4
         with:
-          name: bloggo-${{ matrix.arch }}
-          path: backend/bloggo-linux-${{ matrix.arch }}.tar.gz
+          name: ${{ matrix.artifact_name }}
+          path: backend/${{ matrix.artifact_name }}.tar.gz
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: backend/${{ matrix.artifact_name }}.zip
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -69,8 +121,15 @@ jobs:
           path: artifacts
       - name: Generate checksums
         run: |
-          sha256sum artifacts/bloggo-amd64/bloggo-linux-amd64.tar.gz > checksums.txt
-          sha256sum artifacts/bloggo-arm64/bloggo-linux-arm64.tar.gz >> checksums.txt
+          cd artifacts
+          for dir in */; do
+            for file in "$dir"*; do
+              if [ -f "$file" ]; then
+                sha256sum "$file" >> ../checksums.txt
+              fi
+            done
+          done
+          cd ..
       - name: Determine if pre-release
         id: prerelease
         run: |
@@ -83,8 +142,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/bloggo-amd64/bloggo-linux-amd64.tar.gz
-            artifacts/bloggo-arm64/bloggo-linux-arm64.tar.gz
+            artifacts/bloggo-linux-amd64/bloggo-linux-amd64.tar.gz
+            artifacts/bloggo-linux-arm64/bloggo-linux-arm64.tar.gz
+            artifacts/bloggo-darwin-amd64/bloggo-darwin-amd64.tar.gz
+            artifacts/bloggo-darwin-arm64/bloggo-darwin-arm64.tar.gz
+            artifacts/bloggo-windows-amd64.exe/bloggo-windows-amd64.exe.zip
+            artifacts/bloggo-windows-arm64.exe/bloggo-windows-arm64.exe.zip
             checksums.txt
           prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
           generate_release_notes: true
@@ -92,9 +155,51 @@ jobs:
             ## Bloggo ${{ github.ref_name }}
             ### Installation
             Download the appropriate binary for your system:
+
             **Linux AMD64:**
             ```bash
             wget https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-linux-amd64.tar.gz
             tar -xzf bloggo-linux-amd64.tar.gz
             chmod +x bloggo-linux-amd64
             ./bloggo-linux-amd64
+            ```
+
+            **Linux ARM64:**
+            ```bash
+            wget https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-linux-arm64.tar.gz
+            tar -xzf bloggo-linux-arm64.tar.gz
+            chmod +x bloggo-linux-arm64
+            ./bloggo-linux-arm64
+            ```
+
+            **macOS AMD64 (Intel):**
+            ```bash
+            wget https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-darwin-amd64.tar.gz
+            tar -xzf bloggo-darwin-amd64.tar.gz
+            chmod +x bloggo-darwin-amd64
+            ./bloggo-darwin-amd64
+            ```
+
+            **macOS ARM64 (Apple Silicon):**
+            ```bash
+            wget https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-darwin-arm64.tar.gz
+            tar -xzf bloggo-darwin-arm64.tar.gz
+            chmod +x bloggo-darwin-arm64
+            ./bloggo-darwin-arm64
+            ```
+
+            **Windows AMD64:**
+            ```powershell
+            Invoke-WebRequest -Uri https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-windows-amd64.exe.zip -OutFile bloggo-windows-amd64.exe.zip
+            Expand-Archive bloggo-windows-amd64.exe.zip
+            cd bloggo-windows-amd64.exe
+            .\bloggo-windows-amd64.exe
+            ```
+
+            **Windows ARM64:**
+            ```powershell
+            Invoke-WebRequest -Uri https://github.com/Elagoht/bloggo/releases/download/${{ github.ref_name }}/bloggo-windows-arm64.exe.zip -OutFile bloggo-windows-arm64.exe.zip
+            Expand-Archive bloggo-windows-arm64.exe.zip
+            cd bloggo-windows-arm64.exe
+            .\bloggo-windows-arm64.exe
+            ```
