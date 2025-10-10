@@ -5,7 +5,7 @@ BINARY_NAME=bloggo
 FRONTEND_DIR=frontend
 BACKEND_DIR=backend
 OUTPUT_DIR=build
-EMBED_DIR=$(BACKEND_DIR)/internal/embed
+EMBED_DIR=$(BACKEND_DIR)/frontend
 
 # Build the full-stack application (frontend + backend in single binary)
 build:
