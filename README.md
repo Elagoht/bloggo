@@ -8,7 +8,6 @@
 [![Node Version](https://img.shields.io/badge/Node-20+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 ![GitHub License](https://img.shields.io/github/license/Elagoht/bloggo?style=for-the-badge)
 [![Platform](https://img.shields.io/badge/Linux-black?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/Elagoht/bloggo/releases)
-[![Platform](https://img.shields.io/badge/Macos-black?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/Elagoht/bloggo/releases)
 
 A modern, full-stack blog platform with embedded frontend and backend in a single binary.
 
@@ -43,24 +42,6 @@ wget https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-linux-arm
 tar -xzf bloggo-linux-arm64.tar.gz
 chmod +x bloggo-linux-arm64
 ./bloggo-linux-arm64
-```
-
-**macOS AMD64 (Intel):**
-
-```bash
-wget https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-darwin-amd64.tar.gz
-tar -xzf bloggo-darwin-amd64.tar.gz
-chmod +x bloggo-darwin-amd64
-./bloggo-darwin-amd64
-```
-
-**macOS ARM64 (Apple Silicon):**
-
-```bash
-wget https://github.com/Elagoht/bloggo/releases/latest/download/bloggo-darwin-arm64.tar.gz
-tar -xzf bloggo-darwin-arm64.tar.gz
-chmod +x bloggo-darwin-arm64
-./bloggo-darwin-arm64
 ```
 
 ### Verify Download
@@ -130,7 +111,6 @@ make clean
 Releases are automated via GitHub Actions. When you push a tag, binaries are built for:
 
 - **Linux**: AMD64, ARM64
-- **macOS**: AMD64 (Intel), ARM64 (Apple Silicon)
 
 To create a new release:
 
@@ -217,7 +197,7 @@ After extracting the release archive:
 
 1. Create a `.env` file with your configuration (copy from `.env.example`)
 2. Run the binary:
-   - **Linux/macOS**: `./bloggo-linux-amd64` (or your platform's binary)
+   - **Linux**: `./bloggo-linux-amd64` (or your platform's binary)
 3. The application will create:
    - `bloggo.sqlite` - Database file (on first run)
    - `uploads/` - File storage directory (automatically)
